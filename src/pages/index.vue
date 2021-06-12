@@ -37,7 +37,7 @@
         <!-- 促销商品 -->
         <ul class="product-promo-list">
           <li v-for="(item,index) in promoList" :key="index">
-            <a :href="'/#/product/'+ item.id" target="_blank">
+            <a :href="'/#/detail/'+ item.id" target="_blank">
               <img v-lazy="item.img" alt />
             </a>
           </li>
@@ -67,7 +67,7 @@
             <div class="product-list">
               <ul >
                 <li v-for="(item,index) in phoneList" :key="index">
-                  <a :href="'/#/product/'+item.id" target="_blank">
+                  <a :href="'/#/detail/'+item.id" target="_blank">
                     <img v-lazy="item.img_url" alt />
                     <p class="product-name">{{item.title}}</p>
                     <p class="product-subtitle">{{item.description}}</p>

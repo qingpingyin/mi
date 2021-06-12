@@ -16,11 +16,10 @@
       <!-- 商品选项 -->
       <div class="product-detail-box">
         <h3 class="product-name">{{product.name}}</h3>
-        <p class="product-subtitle">{{product.subtitle}}</p>
+        <p class="product-subtitle">{{product.description}}</p>
         <p class="owner">小米自营</p>
         <p class="product-price">
-          <span class="price-discount">{{product.price}}元</span>
-          <span class="price" v-if="product.discount">2599元</span>
+          <span class="price-discount">{{product.shop_price}}元</span>
         </p>
         <!-- 地址 -->
         <div class="address-box"></div>
@@ -56,10 +55,10 @@
         </div>
         <div class="selected-box">
           <p class="product-info">
-            <span class="name">{{product.name}}</span>
-            <span class="price">{{product.price}}元</span>
+            <span class="name">{{product.title}}</span>
+            <span class="price">{{product.shop_price}}元</span>
           </p>
-          <p class="total-price">总计：{{product.price}}元</p>
+          <p class="total-price">总计：{{product.shop_price}}元</p>
         </div>
         <div class="addCart-box">
           <span class="btn-add" @click="addToCart" v-if="user.real_name !== ''">加入购物车</span>
@@ -85,6 +84,7 @@ import { swiper, swiperSlide } from "vue-awesome-swiper";
 import ProductParams from "../components/ProductParams";
 import {mapGetters} from "vuex";
 import {getProductDetail} from "../api/product";
+
 export default {
   name: "detail",
   data() {
@@ -119,11 +119,6 @@ export default {
         // 所有的参数同 swiper 官方 api 参数
         // ...
       },
-      subImages: [
-        "/imgs/subImages/sub-img-2.jpg",
-        "/imgs/subImages/sub-img-3.jpg",
-        "/imgs/subImages/sub-img-1.jpg"
-      ],
       //   规格
       options: [
         {
@@ -164,9 +159,8 @@ export default {
         "pid":this.id
       })
       this.product = product.data
-     console.log(this.product)
     },
-    addToCart() {
+   async addToCart() {
       this.$axios
         .post("/carts", {
           productId: this.id,

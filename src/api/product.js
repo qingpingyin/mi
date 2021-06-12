@@ -1,7 +1,6 @@
 import request from '../utils/request'
 
 
-
 export function getProduct(params){
     return request({
         "url":"/product",
