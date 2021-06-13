@@ -4,12 +4,13 @@
     <router-view></router-view>
     <nav-footer></nav-footer>
     <!-- 协议声明模态框 -->
-    <modal 
-    title="协议声明" 
-    confirmTitle="同意" 
+    <modal
+    title="协议声明"
+    confirmTitle="同意"
     cancleTitle="不同意"
     :modalShow="modal"
     @confirm="handleConfirm"
+    @close="handleCancle"
     >
       <template v-slot:dialog-body>
         <div class="content-wrapper">
@@ -20,7 +21,7 @@
           </p>
           <div class="content">
             <h2>小米商城用户协议</h2>
-            <p class="date">版本日期：2018年12月18日</p>
+            <p class="date">版本日期：2021年6月1日</p>
             <p
               class="warn"
             >《小米商城用户协议》（以下简称“本协议”）是您（或称“用户”，指注册、登录、使用、浏览小米商城的个人或组织）与小米科技有限责任公司（平台运营主体）及其关联公司（包括但不限于小米通讯技术有限公司，以下简称“小米”）及其合作单位（包括但不限于第三方商家）之间关于小米商城网站（域名为www.mi.com，简称本网站）与小米产品、程序及服务所订立的协议。小米和合作单位分别就您在本网站接受服务的过程中享受的权利和承担的义务，与您签订本协议，并独立向您承担责任，互不承担保证、连带或共同责任等。</p>
@@ -50,6 +51,9 @@ export default {
   methods:{
     handleConfirm(){
       this.$router.push({name:'login'})
+    },
+    handleCancle(){
+      this.modalShow = !this.modalShow
     }
   },
   components: {

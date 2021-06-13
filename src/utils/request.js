@@ -49,13 +49,13 @@ service.interceptors.response.use(
                 })
                 break
             case 401:
-                // await MessageBox.confirm(data.msg, '登录过期，请重新登录', {
-                //     confirmButtonText: '重新登录',
-                //     cancelButtonText: '取消',
-                //     type: 'warning'
-                // })
-                // await store.dispatch('user/resetToken')
-                // location.reload()
+                await MessageBox.confirm(data.msg, '登录过期，请重新登录', {
+                    confirmButtonText: '重新登录',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                await store.dispatch('user/resetToken')
+                location.reload()
                 break
             default:
                 Message({

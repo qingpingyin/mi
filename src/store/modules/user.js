@@ -1,5 +1,5 @@
 import {login,getUserInfo} from "../../api/user";
-import {getToken, setToken} from "../../utils/token";
+import {getToken, removeToken, setToken} from "../../utils/token";
 import { Base64 } from 'js-base64'
 const getDefaultState = () => {
     return {
@@ -56,16 +56,27 @@ const actions = {
             return Promise.reject(err)
         }
     },
-    async getUserInfo({ commit }) {
+     async getUserInfo({ commit }) {
         try {
             const data  = await getUserInfo()
-            console.log(data.data)
             commit('SET_USER_INFO', data.data)
             return Promise.resolve()
         } catch (err) {
             return Promise.reject(err)
         }
     },
+    async logout({commit}) {
+        removeToken("access_token")
+        commit('RESET_STATE')
+        return Promise.resolve()
+    },
+    // remove token
+    async resetToken({ commit }) {
+        removeToken() // must remove  token  first
+        commit('RESET_STATE')
+        return Promise.resolve()
+    }
+
 }
 
 export default {

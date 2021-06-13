@@ -115,6 +115,8 @@
 import Logo from './Logo'
 import {mapGetters} from 'vuex'
 import {getCate} from "../api/cate";
+import {logout} from "../api/user";
+
 export default {
   name: "nav-header",
   data() {
@@ -153,12 +155,11 @@ export default {
     this.NavCategoryList =data.data
   },
   methods: {
-    logout() {
-      this.$axios.post("/user/logout").then(() => {
-        this.$store.dispatch("saveUserName", "");
-        this.$store.dispatch('saveCartCount',0)
-        this.toast.show("退出成功");
-      });
+    async logout() {
+      await logout()
+      await this.$store.dispatch('user/logout')
+      this.$router.push({ path: this.redirect || '/' })
+      location.reload()
     }
   }
 };
