@@ -1,5 +1,6 @@
 <template>
   <div class="register">
+    <div id="hidden" v-if="IsRegister">
     <div class="wrapper">
       <div class="wrap">
         <div class="layout">
@@ -63,11 +64,13 @@
       </div>
     </div>
     <Footer></Footer>
+    </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import Footer from "../components/register_footer";
+  import Footer from "../components/RegisterFooter";
   export default {
     name: "register",
     data(){
@@ -79,8 +82,16 @@
           }
         ],
         phone:'',
-        flag:false,
-        err_message:'请输入手机号码'
+        flag:false,  //显示错误信息
+        err_message:'请输入手机号码',
+      }
+    },
+    computed:{
+    //  判断当前路由是不是register
+      IsRegister(){
+        let path = this.$route.name
+        return path === "register";
+
       }
     },
     methods:{
@@ -98,10 +109,13 @@
           return true;
         }
       },
-      //跳转短信发送界面
+      //跳转短信发送界面,同时要给手机发送验证码
       submit_phone(){
         if(this.phone_blur()){
-          this.$router.push({path:''})
+          this.display = false
+          this.$router.push({name:'identify',params:{
+              phone:this.phone
+            }})
         }
       }
     },
@@ -192,7 +206,7 @@
                 .tits{
                   width:314px;
                   height: 40px;
-                  line-height: 10px;
+                  line-height: 40px;
                   display: inline-block;
                   padding-left: 14px;
                   vertical-align: middle;

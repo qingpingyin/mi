@@ -50,7 +50,7 @@ export default {
   },
   methods:{
     handleConfirm(){
-      this.$router.push({name:'login'})
+      this.$router.push({name:'register'})
     },
     handleCancle(){
       this.modalShow = !this.modalShow
