@@ -1,7 +1,6 @@
 const getters = {
     user : state => state.user,
-    carousel : state => state.carousel,
-    cartCount :state => state.cartCount
+    cart : state => state.cart,
 }
 
 export default getters

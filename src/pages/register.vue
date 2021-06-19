@@ -1,73 +1,76 @@
 <template>
   <div class="register">
-    <div class="wrapper">
-      <div class="wrap">
-        <div class="layout">
-          <div id="main_container" class="n-frame device-frame reg_frame">
-            <div class="external_logo_area">
-              <a class="mi_logo" href="javascript:void(0)"></a>
-            </div>
-            <div class="title-item">
-              <h4 class="title_big30">注册小米帐号</h4>
-            </div>
+    <div id="hidden" v-if="IsRegister">
+      <div class="wrapper">
+        <div class="wrap">
+          <div class="layout">
+            <div id="main_container" class="n-frame device-frame reg_frame">
+              <div class="external_logo_area">
+                <a class="mi_logo" href="javascript:void(0)"></a>
+              </div>
+              <div class="title-item">
+                <h4 class="title_big30">注册小米帐号</h4>
+              </div>
 
-            <div>
-              <div class="regbox">
-                <div class="phone_step">
-                  <h4 class="tit_normal">国家/地区</h4>
-                  <div class="listwrap select-regions" >
-                    <!--国家地区-->
-                    <div class="tits display_box">
-                      <p class="result">{{countries[0].c_name}}</p>
-                    </div>
-                  </div>
-                  <div class="region_tip_text">成功注册帐号后，国家/地区将不能被修改</div>
-
-                  <div><h4 class="tit_normal">手机号码</h4></div>
-                  <div class="listwrap_inside_panel c_b">
-                    <div class="inputbg">
-                      <label class="labelbox" >
-                        <div class="cycode_box" id="select-cycode">
-                          <div class="tits display_box">
-                            <p id="select-cycode-result">+86</p>
-                            <i class="icon_arrow"></i></div>
-                        </div>
-                        <input type="tel" name="phone" placeholder="请输入手机号码" v-model="phone"  @blur="phone_blur" @keypress="flag=false" />
-                      </label>
-                    </div>
-                    <div class="err_tip" v-if="flag">
-                      <div class="dis_box">
-                        <em class="icon_error"></em>
-                        <span>{{err_message}}</span>
+              <div>
+                <div class="regbox">
+                  <div class="phone_step">
+                    <h4 class="tit_normal">国家/地区</h4>
+                    <div class="listwrap select-regions" >
+                      <!--国家地区-->
+                      <div class="tits display_box">
+                        <p class="result">{{countries[0].c_name}}</p>
                       </div>
                     </div>
-                  </div>
-                  <div class="fixed_bot mar_phone_dis1">
-                    <input class="btn332 btn_reg_1 submit_step" @click="submit_phone"  type="submit" value="立即注册">
+                    <div class="region_tip_text">成功注册帐号后，国家/地区将不能被修改</div>
+
+                    <div><h4 class="tit_normal">手机号码</h4></div>
+                    <div class="listwrap_inside_panel c_b">
+                      <div class="inputbg">
+                        <label class="labelbox" >
+                          <div class="cycode_box" id="select-cycode">
+                            <div class="tits display_box">
+                              <p id="select-cycode-result">+86</p>
+                              <i class="icon_arrow"></i></div>
+                          </div>
+                          <input type="tel" name="phone" placeholder="请输入手机号码" v-model="phone"  @blur="phone_blur" @keypress="flag=false" />
+                        </label>
+                      </div>
+                      <div class="err_tip" v-if="flag">
+                        <div class="dis_box">
+                          <em class="icon_error"></em>
+                          <span>{{err_message}}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="fixed_bot mar_phone_dis1">
+                      <input class="btn332 btn_reg_1 submit_step" @click="submit_phone"  type="submit" value="立即注册">
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="privacy_box">
-                <div class="msg">
-                  <label class="n_checked select-privacy">已阅读并同意：小米</label>
-                  <a target="_blank" href="https://static.account.xiaomi.com/html/agreement/user/zh_CN.html"> 用户协议</a>
-                  和
-                  <a target="_blank" href="https://privacy.mi.com/miaccount/zh_CN/">隐私政策</a>
+                <div class="privacy_box">
+                  <div class="msg">
+                    <label class="n_checked select-privacy">已阅读并同意：小米</label>
+                    <a target="_blank" href="https://static.account.xiaomi.com/html/agreement/user/zh_CN.html"> 用户协议</a>
+                    和
+                    <a target="_blank" href="https://privacy.mi.com/miaccount/zh_CN/">隐私政策</a>
+                  </div>
                 </div>
+
               </div>
 
             </div>
-
           </div>
         </div>
       </div>
+      <Footer></Footer>
     </div>
-    <Footer></Footer>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import Footer from "../components/register_footer";
+  import Footer from "../components/RegisterFooter";
   export default {
     name: "register",
     data(){
@@ -79,8 +82,15 @@
           }
         ],
         phone:'',
-        flag:false,
-        err_message:'请输入手机号码'
+        flag:false,  //显示错误信息
+        err_message:'请输入手机号码',
+      }
+    },
+    computed:{
+      //  判断当前路由是不是register
+      IsRegister(){
+        let path = this.$route.name
+        return path === "register";
       }
     },
     methods:{
@@ -98,17 +108,19 @@
           return true;
         }
       },
-      //跳转短信发送界面
+      //跳转短信发送界面,同时要给手机发送验证码
       submit_phone(){
         if(this.phone_blur()){
-          this.$router.push({path:''})
+          this.display = false
+          this.$router.push({name:'identify',params:{
+              phone:this.phone
+            }})
         }
       }
     },
     components:{
       Footer
     }
-
   }
 </script>
 
@@ -121,7 +133,6 @@
     background-color: #f9f9f9;
     font-size:14px;
     font-family: Helvetica,arial,"MI Lan Pro","Hiragino Sans GB","PingFang SC","Microsoft YaHei","微軟正黑體","儷黑 Pro",sans-serif;
-
     .wrapper{
       width:100%;
       min-height: 100%;
@@ -183,7 +194,6 @@
                 padding-bottom: 5px;
                 margin-top:0;
                 margin-bottom: 0;
-
               }
               .listwrap{
                 /*padding-bottom: 15px;*/
@@ -192,7 +202,7 @@
                 .tits{
                   width:314px;
                   height: 40px;
-                  line-height: 10px;
+                  line-height: 40px;
                   display: inline-block;
                   padding-left: 14px;
                   vertical-align: middle;
@@ -206,7 +216,6 @@
                     cursor: pointer;
                   }
                 }
-
               }
               .region_tip_text{
                 /*font-size: 14px;*/
@@ -270,7 +279,6 @@
                       border:1px solid #e8e8e8;
                     }
                   }
-
                 }
                 .err_tip{
                   display: block;
@@ -294,7 +302,6 @@
                     vertical-align: middle;
                   }
                 }
-
               }
               .btn_reg_1{
                 background-color: #ff6700;
@@ -314,7 +321,6 @@
                 cursor: pointer;
                 overflow: hidden;
               }
-
             }
             .privacy_box{
               text-align: center;
@@ -334,7 +340,6 @@
                 }
               }
             }
-
           }
         }
       }

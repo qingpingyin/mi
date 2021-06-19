@@ -1,12 +1,13 @@
+const TokenKey ="access_token"
 
-export function getToken(TokenKey) {
+export function getToken() {
     return localStorage.getItem(TokenKey)
 }
 
-export function setToken(TokenKey,token){
+export function setToken(token){
     localStorage.setItem(TokenKey, token)
 }
 
-export function removeToken(TokenKey) {
+export function removeToken() {
     localStorage.removeItem(TokenKey)
 }

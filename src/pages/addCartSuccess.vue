@@ -16,7 +16,7 @@
   </div>
 </template>
 <script>
-import {getProductDetail} from '../api'
+import {getProductDetail} from '../api/product'
 export default {
   name:'buy-scuuess',
   data(){
@@ -25,10 +25,11 @@ export default {
       productName:''
     }
   },
-  mounted(){
-    getProductDetail(this.id).then(res =>{
-      this.productName = res.name;
+  async mounted(){
+    const product = await getProductDetail({
+      "pid":this.id
     })
+    this.productName =product.data.title
   }
 }
 </script>

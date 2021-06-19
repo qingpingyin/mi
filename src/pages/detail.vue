@@ -84,6 +84,7 @@ import { swiper, swiperSlide } from "vue-awesome-swiper";
 import ProductParams from "../components/ProductParams";
 import {mapGetters} from "vuex";
 import {getProductDetail} from "../api/product";
+import {addCart} from "../api/cart";
 
 export default {
   name: "detail",
@@ -161,19 +162,18 @@ export default {
       this.product = product.data
     },
    async addToCart() {
-      this.$axios
-        .post("/carts", {
-          productId: this.id,
-          selected: true
-        })
-        .then(res => {
-          // 添加购物车成功
-          this.$store.dispatch('saveCartCount',res.cartTotalQuantity)
-          this.$router.push(`/addCartSuccess/${this.id}`);
-        });
+       let data = {
+         uid: this.$store.getters.user.id+"",
+         pid: this.id,
+         num: "1"
+       }
+     //添加购物车 默认数量为1
+     const cart = await addCart(data)
+     // 添加购物车成功
+     this.$router.push(`/addCartSuccess/${this.id}`);
+     location.reload()
     }
   },
-
   mounted() {
     this.getProduct();
   },

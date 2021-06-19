@@ -5,21 +5,27 @@
 </template>
 
 <script>
+
+import {getToken} from "./utils/token";
+import {getUserInfo} from "./api/user";
+
 export default {
   name: "App",
   components: {},
-  computed: {},
+  computed: {
+  },
   async mounted() {
+    //判断用户是否登陆
+      let token = getToken();
+      if (token){
+          //获取用户信息
+          await this.$store.dispatch("user/getUserInfo")
+          //获取用户购物车信息
+          await this.$store.dispatch("cart/getCartList",{
+            "uid":this.$store.getters.user.id
+          })
+      }
 
-      await this.$store.dispatch('user/getUserInfo')
-    // getCartCount().then(res => {
-    //   //未登录时，接口返回不是数字类型时，设置为0
-    //   if (typeof res !== "number") {
-    //     this.$store.dispatch("saveCartCount", 0);
-    //   } else {
-    //     this.$store.dispatch("saveCartCount", res);
-    //   }
-    // });
   }
 };
 </script>

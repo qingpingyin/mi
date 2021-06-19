@@ -80,7 +80,6 @@
         //表单验证
 
         await this.$store.dispatch('user/login',this.loginForm)
-
         this.$router.push({ path: this.redirect || '/' })
     }
   }

@@ -3,104 +3,95 @@
     <order-header title="我的购物车" :tipsShow="true"></order-header>
     <div class="main-wrapper">
       <!-- 购物车 -->
-      <div class="cart-list" v-if="cartList.length > 0">
-        <!-- 购物车列表头 -->
-        <div class="cart-list-header">
-          <div class="col col-check">
-            <span class="btn-check" :class="{'checked':selectedAll}" @click="selectedAllClick">
+      <div class="cart-list" v-if="cart.cart_item.length > 0 ">
+          <!-- 购物车列表头 -->
+          <div class="cart-list-header">
+              <div class="col col-check">
+            <span class="btn-check" :class="{'checked':checkAll}"  @click="selectedAllClick(cart.cart_item)">
               <i class="iconfont icon-right"></i>
             </span> 全选
+              </div>
+              <div class="col col-img"></div>
+              <div class="col col-name">商品名称</div>
+              <div class="col col-price">单价</div>
+              <div class="col col-amount">数量</div>
+              <div class="col col-total">小计</div>
+              <div class="col col-action">操作</div>
           </div>
-          <div class="col col-img"></div>
-          <div class="col col-name">商品名称</div>
-          <div class="col col-price">单价</div>
-          <div class="col col-amount">数量</div>
-          <div class="col col-total">小计</div>
-          <div class="col col-action">操作</div>
-        </div>
-        <!-- 购物车列表 -->
-        <ul class="cart-list-body">
-          <li class="cart-list-item" v-for="(listItem,index) in cartList" :key="index">
-            <div class="col col-check">
+          <!-- 购物车列表 -->
+          <ul class="cart-list-body">
+              <li class="cart-list-item"  v-for="(item,index) in cart.cart_item" :key="index">
+                  <div class="col col-check">
               <span
-                class="btn-check"
-                :class="{'checked':listItem.productSelected}"
-                @click="selectedProduct(listItem.productId,listItem.productSelected)"
+                      class="btn-check"
+                      :class="{'checked':checked}"
+                      @click="selectGood(item.product.id)"
               >
                 <i class="iconfont icon-right"></i>
               </span>
-            </div>
-            <div class="col col-img">
-              <a href>
-                <img v-lazy="listItem.productMainImage" alt />
-              </a>
-            </div>
-            <div class="col col-name">
-              <a href>{{listItem.productName}}</a>
-            </div>
-            <div class="col col-price">{{listItem.productPrice}}元</div>
-            <div class="col col-amount">
-              <div class="count">
+                  </div>
+                  <div class="col col-img">
+                      <a href>
+                          <img v-lazy="item.product.img_url"  alt />
+                      </a>
+                  </div>
+                  <div class="col col-name">
+                      <a href>{{item.product.title}}</a>
+                  </div>
+                  <div class="col col-price">{{item.product.shop_price}}</div>
+                  <div class="col col-amount">
+                      <div class="count">
                 <span
-                  class="btn minus"
-                  @click="decreaseProduct(listItem.productId,listItem.quantity)"
+                        class="btn minus"
+                        @click="decreaseProduct(item.product.id,item.num)"
                 >-</span>
-                <input
-                  class="num"
-                  v-model="listItem.quantity"
-                  @blur="changeQuantity(listItem.productId,listItem.quantity,listItem.productStock)"
-                />
-                <span
-                  class="btn plus"
-                  @click="increaseProduct(listItem.productId,listItem.quantity,listItem.productStock)"
-                >+</span>
-              </div>
-            </div>
-            <div class="col col-total">{{listItem.productTotalPrice}}元</div>
-            <div class="col col-action">
-              <span class="btn-delete" @click="deleteProduct(listItem.productId)">
+                          <input
+                                  class="num"
+                                  v-model="item.num"
+                                  @blur="changeQuantity(item.product.id,item.num,item.product.inventory)"
+                          />
+                          <span
+                                  class="btn plus"
+                                  @click="increaseProduct(item.product.id,item.num,item.product.inventory)"
+                          >+</span>
+                      </div>
+                  </div>
+                  <div class="col col-total">{{item.num * item.product.shop_price}}</div>
+                  <div class="col col-action">
+              <span class="btn-delete" @click="deleteProduct(item.product.id)">
                 <i class="iconfont icon-close"></i>
               </span>
-            </div>
-          </li>
-        </ul>
-        <!-- 购物车脚部 -->
-        <div class="cart-bar">
-          <a href class="backup-shopping">继续购物</a>
-          <div class="count">
-            <div class="total-mount">
-              共
-              <span class="hignlight">{{cartTotalQuantity}}</span>件商品，已选择
-              <span class="hignlight">{{selectedQuantity}}</span>件
-            </div>
-            <div class="total-price">
-              合计:
-              <span class="price">{{cartTotalPrice}}</span>元
-            </div>
+                  </div>
+              </li>
+          </ul>
+          <!-- 购物车脚部 -->
+          <div class="cart-bar">
+              <a href class="backup-shopping">继续购物</a>
+              <div class="count">
+                  <div class="total-mount">
+                      共
+<!--                      <span class="hignlight">{{cartTotalQuantity}}</span>件商品，已选择-->
+<!--                      <span class="hignlight">{{selectedQuantity}}</span>件-->
+                  </div>
+                  <div class="total-price">
+                      合计:
+                      <span class="price">{{cart.total_price}}</span>元
+                  </div>
+              </div>
+<!--              <router-link-->
+<!--                      class="btn-pay"-->
+<!--                      :class="{active:cartTotalPrice > 0}"-->
+<!--                      to="/order/orderComfirm"-->
+<!--              >去结算</router-link>-->
           </div>
-          <router-link
-            class="btn-pay"
-            :class="{active:cartTotalPrice > 0}"
-            to="/order/orderComfirm"
-          >去结算</router-link>
-        </div>
       </div>
       <!-- 购物车为空 -->
-      <div class="cart-empty" v-show="cartList.length == 0 && showLoading == false">
+      <div class="cart-empty" v-show=" cart.cart_item.length== 0 && showLoading == false">
         <h2>你的购物车还是空的!</h2>
         <div class="btn-tobuy" @click="$router.push({name:'index'})">马上去购物</div>
       </div>
       <!-- loading -->
-      <Loadding v-show="showLoading"/>
-      <!-- 删除购物车商品modal -->
-      <Modal
-        :modalShow="delModalShow"
-        title="移除商品"
-        @close="delModalShow = false"
-        @cancle="delModalShow = false"
-        @confirm="removeProduct"
-        msg="确定要移除这件商品吗？"
-      ></Modal>
+<!--      <Loadding v-show="showLoading"/>-->
     </div>
     <nav-footer></nav-footer>
   </div>
@@ -108,144 +99,115 @@
 <script>
 import OrderHeader from "../components/OrderHeader";
 import NavFooter from "../components/NavFooter";
-import Modal from "../components/Modal";
 import Loadding from "../components/Loadding";
-import { getCartList, getCartCount } from "../api";
+import {mapGetters} from 'vuex'
+import {deleteCart, updateNum} from "../api/cart";
+import {Message} from "element-ui";
 export default {
   name: "cart",
   components: {
     OrderHeader,
     NavFooter,
-    Modal,
     Loadding
   },
   data() {
     return {
-      delModalShow: false,
-      showLoading: true,
-      isEmpty: false,
-      cartList: [], //购物车商品
-      cartTotalQuantity: 0, //购物车总数
-      selectedAll: false, //是否全选
-      cartTotalPrice: 0, // 购物车总金额
-      selectedQuantity: 0, // 已选择件数
-      productId: 0
+        checkAll: false,
+        checked: [],
+        price:0,
+        count:0,
+        delModalShow: false,
+        showLoading: true,
     };
   },
   methods: {
-    storeCartCount() {
-      getCartCount().then(res => {
-        //未登录时，接口返回不是数字类型时，设置为0
-        if (typeof res !== "number") {
-          this.$store.dispatch("saveCartCount", 0);
-        } else {
-          this.$store.dispatch("saveCartCount", res);
-        }
-      });
-    },
     // 修改单个商品数量
-    changeQuantity(productId, quantity, productStock) {
+    async changeQuantity(productId, quantity, productStock) {
       // 判断用户输入的是否为数字
       const NUM_REG = /^[0-9]+$/; //匹配正整数正则
       let isNumber = NUM_REG.test(quantity);
       if (isNumber) {
         if (quantity > productStock) {
-          this.toast.show("商品加入购物车数量超过限购数");
+            Message({
+                message:"商品加入购物车数量超过限购数" ,
+                type: 'error',
+                duration: 5 * 1000
+            })
           return;
         } else if (quantity <= 0) {
-          this.toast.show("商品加入购物车数量不能少于1件");
+            Message({
+                message:"商品加入购物车数量不能少于1件" ,
+                type: 'error',
+                duration: 5 * 1000
+            })
           return;
         } else if (quantity === productStock) {
           return;
+        }else{
+            await updateNum(this.$store.getters.user.id,productId,quantity)
+            location.reload()
         }
       } else {
-        this.toast.show("输入的数量只能是数字！");
+          Message({
+              message:"只能输入数字" ,
+              type: 'error',
+              duration: 5 * 1000
+          })
         return;
       }
 
-      this.$axios
-        .put("/carts/" + productId, {
-          quantity: quantity
-        })
-        .then(res => {
-          this.renderCart(res);
-        });
     },
-    // 商品减一
-    decreaseProduct(productId, quantity) {
-      if (quantity === 1) return;
-      this.$axios
-        .put("/carts/" + productId, {
-          quantity: --quantity
-        })
-        .then(res => {
-          this.renderCart(res);
-        });
-    },
-    // 商品加一
-    increaseProduct(productId, quantity, productStock) {
-      if (quantity === productStock) {
-        this.toast.show("商品加入购物车数量超过限购数");
-        return;
-      }
-      this.$axios
-        .put("/carts/" + productId, {
-          quantity: ++quantity
-        })
-        .then(res => {
-          this.renderCart(res);
-        });
-    },
+      // 商品减一
+      async decreaseProduct(productId, quantity) {
+          if (quantity === 1){
+            return
+          }else{
+              await updateNum(this.$store.getters.user.id,productId,quantity-1)
+              location.reload()
+          }
+      },
+      // 商品加一
+      async increaseProduct(productId, quantity, productStock) {
+          if (quantity === productStock) {
+              Message({
+                  message:"商品加入购物车数量超过限购数" ,
+                  type: 'error',
+                  duration: 5 * 1000
+              })
+              return;
+          }else{
+
+              await updateNum(this.$store.getters.user.id,productId,quantity+1)
+              location.reload()
+          }
+      },
     // 选择商品
-    selectedProduct(productId, productSelected) {
-      this.$axios
-        .put("/carts/" + productId, {
-          selected: !productSelected
-        })
-        .then(res => {
-          this.renderCart(res);
-        });
-    },
-    deleteProduct(id) {
-      this.delModalShow = true;
-      this.productId = id;
-    },
-    // 移除商品
-    removeProduct() {
-      this.$axios.delete("/carts/" + this.productId).then(res => {
-        this.renderCart(res);
-        this.delModalShow = false;
-      });
+      selectGood(item){
+
+      },
+    async deleteProduct(pid) {
+      await deleteCart(this.$store.getters.user.id,pid);
+        location.reload();
+
     },
     // 全选按钮点击
-    selectedAllClick() {
-      let url = this.selectedAll ? "/carts/unSelectAll" : "/carts/selectAll";
-      this.$axios.put(url).then(res => {
-        this.renderCart(res);
-      });
+    selectedAllClick(item) {
+        this.checkAll = ! this.checkAll
+        if(this.checkAll){
+            this.price=0;
+            this.count=0;
+            item.forEach(function (val) {
+                this.checked.push(val.product.id)
+            })
+            this.checkAll = true
+
+        }
     },
-    // 渲染购物车数据函数
-    renderCart(res) {
-      this.cartList = res.cartProductVoList || [];
-      this.cartTotalQuantity = res.cartTotalQuantity;
-      this.selectedAll = res.selectedAll;
-      this.cartTotalPrice = res.cartTotalPrice;
-      // 更新购物车数量
-      this.storeCartCount();
-    }
   },
-  mounted() {
-    getCartList()
-      .then(res => {
-        this.renderCart(res);
-      })
-      .then(() => {
-        // 首次加载购物车完成后关闭动画
-        this.showLoading = false;
-      })
-      .catch(err => {
-        alert(err);
-      });
+  computed:{
+      ...mapGetters(['cart','user']),
+  },
+   mounted() {
   }
 };
 </script>

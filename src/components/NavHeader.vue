@@ -74,9 +74,9 @@
             <a  @click="$emit('register-click')">注册</a>
           </span>
           <a href="/#/login" class="msg">消息通知</a>
-          <a href="/#/cart" class="my-cart" :class="{'has-goods':cartCount > 0}">
+          <a href="/#/cart" class="my-cart" :class="{'has-goods':cart.cart_item.length > 0}">
             <span class="iconfont icon-Cart"></span>
-            购物车({{cartCount}})
+            购物车({{cart.cart_item.length}})
           </a>
         </div>
       </div>
@@ -127,11 +127,9 @@ export default {
   },
   computed: {
     ...mapGetters([
-            'user'
+            'user',
+            'cart'
     ])
-    // cartCount() {
-    //   return this.$store.state.cartCount;
-    // }
   },
   components:{
     Logo
@@ -148,7 +146,6 @@ export default {
       headerSearch.classList.remove("input-focus");
       searchBtn.style.borderLeftColor = "#e0e0e0";
     });
-
     const data = await getCate({
       "is_nav":1
     })

@@ -8,7 +8,7 @@
       </div>
       <div class="user-wrapper">
         <a class="username" href="javascript:;">
-          leewayjean
+          {{user.nike_name}}
           <i class="iconfont icon-arrow"></i>
         </a>
         <span class="split">|</span>
@@ -19,6 +19,7 @@
 </template>
 <script>
 import Logo from "./Logo";
+import {mapGetters} from 'vuex'
 export default {
   name: "order-header",
   props:{
@@ -30,6 +31,9 @@ export default {
       type:Boolean,
       default:false
     }
+  },
+  computed:{
+    ...mapGetters(["user"])
   },
   components: {
     Logo

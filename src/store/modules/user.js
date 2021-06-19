@@ -49,7 +49,7 @@ const actions = {
         try {
             const data =await login(userInfo)
             commit('SET_TOKEN', data.data.access_token)
-            setToken("access_token",data.data.access_token)
+            setToken(data.data.access_token)
             await dispatch('getUserInfo')
             return  Promise.resolve()
         }catch (err) {
@@ -66,7 +66,7 @@ const actions = {
         }
     },
     async logout({commit}) {
-        removeToken("access_token")
+        removeToken()
         commit('RESET_STATE')
         return Promise.resolve()
     },
