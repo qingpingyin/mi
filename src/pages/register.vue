@@ -44,7 +44,7 @@
                       </div>
                     </div>
                     <div class="fixed_bot mar_phone_dis1">
-                      <input class="btn332 btn_reg_1 submit_step" @click="submit_phone"  type="submit" value="立即注册">
+                      <input class="btn332 btn_reg_1 submit_step" @click="submitPhone" type="submit" value="立即注册">
                     </div>
                   </div>
                 </div>
@@ -87,38 +87,38 @@
         err_message: '请输入手机号码',
       }
     },
+    methods: {
+      //跳转短信发送界面,同时要给手机发送验证码.
+      submitPhone() {
+        if (this.phone_blur()) {
+          this.display = false
+          this.$router.push({
+            name: 'identify', params: {
+              phone: this.phone
+            }
+          })
+        }
+      },
+      //验证手机格式
+      phone_blur() {
+        let phone_reg = /^1(3[0-9]|5[0-3,5-9]|7[1-3,5-8]|8[0-9])\d{8}$/;
+        if (this.phone === "") {
+          this.flag = true;
+          return false;
+        } else if (!phone_reg.test(this.phone)) {
+          this.err_message = '手机号码格式错误';
+          this.flag = true
+          return false;
+        } else {
+          return true;
+        }
+      }
+    },
     computed: {
       //  判断当前路由是不是register
       IsRegister() {
         let path = this.$route.name
         return path === "register";
-      },
-      methods: {
-        //验证手机格式
-        phone_blur() {
-          let phone_reg = /^1(3[0-9]|5[0-3,5-9]|7[1-3,5-8]|8[0-9])\d{8}$/;
-          if (this.phone === "") {
-            this.flag = true;
-            return false;
-          } else if (!phone_reg.test(this.phone)) {
-            this.err_message = '手机号码格式错误';
-            this.flag = true
-            return false;
-          } else {
-            return true;
-          }
-        },
-        //跳转短信发送界面,同时要给手机发送验证码.
-        submit_phone() {
-          if (this.phone_blur()) {
-            this.display = false
-            this.$router.push({
-              name: 'identify', params: {
-                phone: this.phone
-              }
-            })
-          }
-        }
       },
       components: {
         Footer
