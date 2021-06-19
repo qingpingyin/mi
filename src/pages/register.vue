@@ -1,6 +1,7 @@
 <template>
   <div class="register">
     <div id="hidden" v-if="IsRegister">
+<<<<<<< HEAD
       <div class="wrapper">
         <div class="wrap">
           <div class="layout">
@@ -11,6 +12,18 @@
               <div class="title-item">
                 <h4 class="title_big30">注册小米帐号</h4>
               </div>
+=======
+    <div class="wrapper">
+      <div class="wrap">
+        <div class="layout">
+          <div id="main_container" class="n-frame device-frame reg_frame">
+            <div class="external_logo_area">
+              <a class="mi_logo" href="javascript:void(0)"></a>
+            </div>
+            <div class="title-item">
+              <h4 class="title_big30">注册小米帐号</h4>
+            </div>
+>>>>>>> bd5657b2698a0ee0678645ac151345933da77c1c
 
               <div>
                 <div class="regbox">
@@ -65,6 +78,11 @@
       </div>
       <Footer></Footer>
     </div>
+<<<<<<< HEAD
+=======
+    <Footer></Footer>
+    </div>
+>>>>>>> bd5657b2698a0ee0678645ac151345933da77c1c
     <router-view></router-view>
   </div>
 </template>
@@ -87,10 +105,18 @@
       }
     },
     computed:{
+<<<<<<< HEAD
       //  判断当前路由是不是register
       IsRegister(){
         let path = this.$route.name
         return path === "register";
+=======
+    //  判断当前路由是不是register
+      IsRegister(){
+        let path = this.$route.name
+        return path === "register";
+
+>>>>>>> bd5657b2698a0ee0678645ac151345933da77c1c
       }
     },
     methods:{

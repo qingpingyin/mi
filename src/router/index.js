@@ -17,6 +17,7 @@ import OrderPay from '../pages/orderPay'
 import Cart from '../pages/cart'
 // 登录&注册
 import Register from '../pages/register'
+import RegisterIdentify from '../pages/registerIdentify'
 import Login from '../pages/login'
 
 
@@ -94,8 +95,17 @@ const router = new VueRouter({
         {
             path: '/register',
             name: 'register',
-            component: Register
+            component: Register,
+            children: [
+                //短信验证
+                {
+                    path:'/register/:phone',
+                    name:'identify',
+                    component: RegisterIdentify
+                },
+            ]
         },
+
         {
             path: '/orderPay',
             name: 'orderPay',
