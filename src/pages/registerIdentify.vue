@@ -21,7 +21,7 @@
                         </div>
                         <div class="inputbg1 inputsend">
                             <label class="labelbox wap_resend_label err_label">
-                                <input class="resendcode" type="text" placeholder="请输入验证码" name="tickt"/>
+                                <input v-model="code" class="resendcode" type="text" placeholder="请输入验证码" name="tickt"/>
                                 <span class="remain">
                                     <a class="color333 send-status" @click="reckonTime" :class="{'disabled':BtnDisabled}" href="javascript:void(0)">{{BtnText}}</a>
                                 </span>
@@ -37,7 +37,7 @@
                             <a target="_blank" href="https://account.xiaomi.com/helpcenter/faq/zh_CN/02.faqs/05.sms-and-email-verification-code/faq-1">收不到验证码?</a>
                         </div>
                         <div class="fixed_bot mar_phone_dis2">
-                            <input class="btn332 btn_reg_1 submit-step" type="submit" value="下一步"/>
+                            <input class="btn332 btn_reg_1 submit-step" type="submit" value="下一步" @click="goSetPwdPage"/>
                             <input class="btn332 btn_reg_2 change-view" type="button" value="返回" @click="$router.go(-1)"/>
                         </div>
                     </div>
@@ -64,7 +64,9 @@
                 //发送验证码按钮
                 BtnDisabled:false,
             //    判断验证码是否正确
-                identifyCode:'none'
+                identifyCode:'none',
+                //验证码
+                code:''
             }
         },
         computed:{
@@ -77,6 +79,28 @@
             }
         },
         methods:{
+            //验证 验证码
+            identifyCodeIsTrue(){
+                if (this.code ==="" ){
+                    this.identifyCode = 'block';
+                    return false;
+                }else{
+                    return true;
+                }
+            },
+            //去设置密码界面
+            goSetPwdPage(){
+            //    首先验证 验证码是否正确
+                if (this.identifyCodeIsTrue()){
+                    this.$router.push(
+                        {
+                        name:'registerPwd',
+                        params:{
+                        phone:this.phone
+                        }
+                    })
+                }
+            },
             //   已进入页面进行倒计时
             reckonTime(){
              this.BtnDisabled = true;

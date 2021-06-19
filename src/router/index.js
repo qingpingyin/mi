@@ -19,7 +19,7 @@ import Cart from '../pages/cart'
 import Register from '../pages/register'
 import RegisterIdentify from '../pages/registerIdentify'
 import Login from '../pages/login'
-
+import RegisterPwd from '../pages/registerPwd'
 
 Vue.use(VueRouter);
 
@@ -103,6 +103,12 @@ const router = new VueRouter({
                     name:'identify',
                     component: RegisterIdentify
                 },
+                //设置密码
+                {
+                    path:'/register/:phone/SetPwd',
+                    name:'registerPwd',
+                    component:RegisterPwd
+                }
             ]
         },
 

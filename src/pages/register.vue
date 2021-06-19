@@ -134,7 +134,7 @@
           return true;
         }
       },
-      //跳转短信发送界面,同时要给手机发送验证码
+      //跳转短信发送界面,同时要给手机发送验证码.
       submit_phone(){
         if(this.phone_blur()){
           this.display = false
