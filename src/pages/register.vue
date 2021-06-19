@@ -1,18 +1,6 @@
 <template>
   <div class="register">
     <div id="hidden" v-if="IsRegister">
-<<<<<<< HEAD
-      <div class="wrapper">
-        <div class="wrap">
-          <div class="layout">
-            <div id="main_container" class="n-frame device-frame reg_frame">
-              <div class="external_logo_area">
-                <a class="mi_logo" href="javascript:void(0)"></a>
-              </div>
-              <div class="title-item">
-                <h4 class="title_big30">注册小米帐号</h4>
-              </div>
-=======
     <div class="wrapper">
       <div class="wrap">
         <div class="layout">
@@ -23,7 +11,6 @@
             <div class="title-item">
               <h4 class="title_big30">注册小米帐号</h4>
             </div>
->>>>>>> bd5657b2698a0ee0678645ac151345933da77c1c
 
               <div>
                 <div class="regbox">
@@ -78,11 +65,7 @@
       </div>
       <Footer></Footer>
     </div>
-<<<<<<< HEAD
-=======
     <Footer></Footer>
-    </div>
->>>>>>> bd5657b2698a0ee0678645ac151345933da77c1c
     <router-view></router-view>
   </div>
 </template>
@@ -91,61 +74,55 @@
   import Footer from "../components/RegisterFooter";
   export default {
     name: "register",
-    data(){
-      return{
-        countries:[
+    data() {
+      return {
+        countries: [
           {
-            c_name:'中国',
-            upper:'Z'
+            c_name: '中国',
+            upper: 'Z'
           }
         ],
-        phone:'',
-        flag:false,  //显示错误信息
-        err_message:'请输入手机号码',
+        phone: '',
+        flag: false,  //显示错误信息
+        err_message: '请输入手机号码',
       }
     },
-    computed:{
-<<<<<<< HEAD
+    computed: {
       //  判断当前路由是不是register
-      IsRegister(){
+      IsRegister() {
         let path = this.$route.name
         return path === "register";
-=======
-    //  判断当前路由是不是register
-      IsRegister(){
-        let path = this.$route.name
-        return path === "register";
-
->>>>>>> bd5657b2698a0ee0678645ac151345933da77c1c
-      }
-    },
-    methods:{
-      //验证手机格式
-      phone_blur(){
-        let phone_reg =/^1(3[0-9]|5[0-3,5-9]|7[1-3,5-8]|8[0-9])\d{8}$/;
-        if (this.phone ===""){
-          this.flag = true;
-          return false;
-        }else if (!phone_reg.test(this.phone)){
-          this.err_message = '手机号码格式错误';
-          this.flag = true
-          return false;
-        }else{
-          return true;
+      },
+      methods: {
+        //验证手机格式
+        phone_blur() {
+          let phone_reg = /^1(3[0-9]|5[0-3,5-9]|7[1-3,5-8]|8[0-9])\d{8}$/;
+          if (this.phone === "") {
+            this.flag = true;
+            return false;
+          } else if (!phone_reg.test(this.phone)) {
+            this.err_message = '手机号码格式错误';
+            this.flag = true
+            return false;
+          } else {
+            return true;
+          }
+        },
+        //跳转短信发送界面,同时要给手机发送验证码.
+        submit_phone() {
+          if (this.phone_blur()) {
+            this.display = false
+            this.$router.push({
+              name: 'identify', params: {
+                phone: this.phone
+              }
+            })
+          }
         }
       },
-      //跳转短信发送界面,同时要给手机发送验证码.
-      submit_phone(){
-        if(this.phone_blur()){
-          this.display = false
-          this.$router.push({name:'identify',params:{
-              phone:this.phone
-            }})
-        }
+      components: {
+        Footer
       }
-    },
-    components:{
-      Footer
     }
   }
 </script>
