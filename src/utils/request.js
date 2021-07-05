@@ -19,17 +19,17 @@ service.interceptors.request.use(config=>{
 //响应拦截
 service.interceptors.response.use(
     response => {
-        const { data } = response
+        const  res  = response.data
         // 正常情况
-        if (data.status !== 200) {
+        if (res.status !== 200) {
             Message({
-                message: data.msg,
+                message: res.msg,
                 type: 'error',
                 duration: 5 * 1000
             })
-            return Promise.reject(data.msg)
+            return Promise.reject(res.msg)
         }
-        return data
+        return res
     },
     async error => {
         const { status, data } = error.response
@@ -56,6 +56,13 @@ service.interceptors.response.use(
                 })
                 await this.$store.dispatch('user/resetToken')
                 location.reload()
+                break
+            case 400:
+                Message({
+                    message: data.msg,
+                    type: 'error',
+                    duration: 5 * 1000
+                })
                 break
             default:
                 Message({

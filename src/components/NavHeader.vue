@@ -66,7 +66,9 @@
                 </li>
               </ul>
             </a>
-            <a href="/#/order/orderList" class="my-order" target="__blank">我的订单</a>
+            <router-link :to="{path:'/order/orderList',query:{id:user.id}}">
+            <a href="javascript:void(0)" class="my-order" target="__blank">我的订单</a>
+            </router-link>
           </span>
           <!-- 未登录显示 -->
           <span class="not-login" v-else>
@@ -74,9 +76,9 @@
             <a  @click="$emit('register-click')">注册</a>
           </span>
           <a href="/#/login" class="msg">消息通知</a>
-          <a href="/#/cart" class="my-cart" :class="{'has-goods':cart.cart_item.length > 0}">
+          <a href="/#/cart" class="my-cart" :class="{'has-goods':cart.count>0}">
             <span class="iconfont icon-Cart"></span>
-            购物车({{cart.cart_item.length}})
+            购物车({{cart.count}})
           </a>
         </div>
       </div>

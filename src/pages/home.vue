@@ -36,6 +36,7 @@
 import Modal from "../components/Modal";
 import NavHeader from "../components/NavHeader";
 import NavFooter from "../components/NavFooter";
+import {getToken} from "../utils/token";
 export default {
   name: "home",
   data(){
@@ -60,6 +61,19 @@ export default {
     NavHeader,
     NavFooter,
     Modal
+  },
+ async mounted() {
+    //判断用户是否登陆
+    let token = getToken();
+    if (token){
+      //获取用户信息
+      await this.$store.dispatch("user/getUserInfo")
+      //获取用户购物车信息
+      await this.$store.dispatch("cart/getCartList",{
+        "uid":this.$store.getters.user.id
+      })
+      await this.$store.dispatch("cart/setCount")
+    }
   }
 };
 </script>

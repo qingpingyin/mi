@@ -72,6 +72,7 @@
 
 <script>
   import Footer from "../components/RegisterFooter";
+  import {sendSms} from "../api/user";
   export default {
     name: "register",
     data() {
@@ -89,12 +90,16 @@
     },
     methods: {
       //跳转短信发送界面,同时要给手机发送验证码.
-      submitPhone() {
+      async submitPhone() {
         if (this.phone_blur()) {
+          const resp =await sendSms({
+            "mobile":this.phone
+          })
           this.display = false
           this.$router.push({
             name: 'identify', params: {
-              phone: this.phone
+              phone: this.phone,
+              code:resp.data
             }
           })
         }

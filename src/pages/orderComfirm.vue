@@ -4,7 +4,7 @@
     <!-- 订单信息区 -->
     <div class="order-info-area">
       <div class="container">
-        <div class="order-section" v-if="addressList.length >0 ||selectedProductList.length >0">
+        <div class="order-section" v-if="addressList.length >0 ||this.$store.getters.cart.checkGoods.length >0">
           <div class="order-content">
             <!-- 收获地址 -->
             <section class="address-wrapper">
@@ -17,10 +17,10 @@
                   :class="{selected:isSelected === index + 1}"
                   @click="chooseAddress(item,index)"
                 >
-                  <h4 class="consignee">{{item.receiverName}}</h4>
-                  <p class="phone">{{item.receiverMobile}}</p>
-                  <p>{{item.receiverProvince}} {{item.receiverCity}} {{item.receiverDistrict}}</p>
-                  <p>{{item.receiverAddress}}</p>
+                  <h4 class="consignee">{{item.receiver_name}}</h4>
+                  <p class="phone">{{item.receiver_mobile}}</p>
+                  <p>{{item.receiver_province}} {{item.receiver_city}} {{item.receiver_district}}</p>
+                  <p>{{item.receiver_address}}</p>
                   <p class="footer" v-if="isSelected === index + 1">
                     <span class="iconfont icon-delete" @click="delModalShow = true"></span>
                     <span class="btn-modify" @click="modifyAddress(item)">修改</span>
@@ -36,15 +36,15 @@
             <section class="product-wrapper">
               <h3>商品及优惠券</h3>
               <ul class="product-list">
-                <li class="product-item" v-for="(item,index) in selectedProductList" :key="index">
+                <li class="product-item" v-for="(item,index) in cart.checkGoods" :key="index">
                   <div class="col col-img">
-                    <img v-lazy="item.productMainImage" alt />
+                    <img v-lazy="item.product.img_url" alt />
                   </div>
                   <div class="col col-name">
-                    <a href>{{item.productName}}</a>
+                    <a href>{{item.product.title}}</a>
                   </div>
-                  <div class="col col-price">{{item.productPrice}} x {{item.quantity}}</div>
-                  <div class="col col-total">{{item.productTotalPrice}}元</div>
+                  <div class="col col-price">{{item.num}} x {{item.product.shop_price}}</div>
+                  <div class="col col-total">{{item.num * item.product.shop_price}}元</div>
                 </li>
               </ul>
             </section>
@@ -66,13 +66,13 @@
                   <li class="total-price-title">应付总额:</li>
                 </ul>
                 <ul class="nums-list">
-                  <li>{{quantityTotal}}件</li>
-                  <li>{{productTotal}}元</li>
+                  <li>{{cart.checkGoods.length}}件</li>
+                  <li>{{totalPrice}}元</li>
                   <li>-0元</li>
                   <li>-0元</li>
                   <li>0元</li>
                   <li>
-                    <span class="total-price">{{productTotal}}</span> 元
+                    <span class="total-price">{{totalPrice}}</span> 元
                   </li>
                 </ul>
               </div>
@@ -84,7 +84,6 @@
               <p v-show="isSelected">{{userInfo}}</p>
               <p v-show="isSelected">
                 {{address}}
-                <span>修改</span>
               </p>
             </div>
             <div class="btn-group">
@@ -106,18 +105,18 @@
     <!-- 增加地址modal -->
     <Modal
       :modalShow="modalShow"
-      title="添加收货地址"
+      title="收货地址"
       @close="modalShow = false"
       @cancle="modalShow = false"
       @confirm="addNewAddress"
     >
       <template v-slot:dialog-body>
         <form class="new-address">
-          <!-- 收货人姓名 -->
+<!--           收货人姓名-->
           <div class="input-group">
             <div
               class="input-item"
-              :class="{'input-focus':target == 1,'input-active':newAddress.receiverName != ''}"
+              :class="{'input-focus':target == 1,'input-active':newAddress.receiver_name != ''}"
             >
               <label for="name">姓名</label>
               <input
@@ -126,13 +125,13 @@
                 id="name"
                 @focus="target = 1"
                 @blur="target = 0"
-                v-model="newAddress.receiverName"
+                v-model="newAddress.receiver_name"
               />
             </div>
-            <!-- 收货人手机号 -->
+<!--             收货人手机号-->
             <div
               class="input-item"
-              :class="{'input-focus':target == 2,'input-active':newAddress.receiverMobile != ''}"
+              :class="{'input-focus':target == 2,'input-active':newAddress.receiver_mobile != ''}"
             >
               <label for="phone">手机号</label>
               <input
@@ -141,15 +140,31 @@
                 id="phone"
                 @focus="target = 2"
                 @blur="target = 0"
-                v-model="newAddress.receiverMobile"
+                v-model="newAddress.receiver_mobile"
               />
             </div>
           </div>
-          <!--详细地址 -->
+          <div class="aj-china-area">
+            <span>省:</span>
+            <select v-model="newAddress.receiver_province" @change="changeCity()" class="aj-select" >
+              <option value="">请选择</option>
+              <option v-for="(item, index) in optionData" :value="item.name" :key="index">{{item.name}}</option>
+            </select>
+            <span>市: </span>
+            <select v-model="newAddress.receiver_city" @change="changeDistrict()" class="aj-select" >
+              <option v-for="(item, index) in cityArr" :value="item.name" :key="index">{{item.name}}</option>
+            </select>
+            <span>区:</span>
+            <select v-model="newAddress.receiver_district" class="aj-select"  >
+              <option v-for="(item, index) in districtArr" :value="item.name" :key="index">{{item.name}}</option>
+            </select>
+          </div>
+
+<!--          详细地址-->
           <div class="input-group textarea-wrapper">
             <div
               class="input-item"
-              :class="{'input-focus':target == 3,'input-active':newAddress.receiverAddress != ''}"
+              :class="{'input-focus':target == 3,'input-active':newAddress.receiver_address != ''}"
             >
               <label for="name">详细地址</label>
               <textarea
@@ -157,25 +172,8 @@
                 id="name"
                 @focus="target = 3"
                 @blur="target = 0"
-                v-model="newAddress.receiverAddress"
+                v-model="newAddress.receiver_address"
               ></textarea>
-            </div>
-          </div>
-          <!-- 地址标签 -->
-          <div class="input-group tag-wrapper">
-            <div
-              class="input-item"
-              :class="{'input-focus':target == 4,'input-active':newAddress.receiverAddress != ''}"
-            >
-              <label for="name">地址标签</label>
-              <input
-                type="text"
-                :placeholder="target == 4?`如&quot;家&quot;、&quot;公司&quot;。限5个字内`:''"
-                id="name"
-                @focus="target = 4"
-                @blur="target = 0"
-                v-model="newAddress.receiverAddress"
-              />
             </div>
           </div>
         </form>
@@ -195,117 +193,135 @@
 <script>
 import OrderHeader from "../components/OrderHeader";
 import Modal from "../components/Modal";
-import { getCartList } from "../api";
+import {mapGetters} from 'vuex';
+import {createAddress, deleteAddress, getAddress} from "../api/address";
+import optionData from '../assets/city'
+import {createOrder} from "../api/order";
 export default {
   name: "confirm-order",
   data() {
     return {
+      optionData,
+      cityArr:[],
+      districtArr:[],
       showLoading: true, //是否显示加载动画
       delModalShow: false, //是否显示删除地址弹出框
       modalShow: false, //是否显示添加地址弹出框
       target: 0, // modal组件动态绑定样式
-      selectedProductList: [], //选中的商品
       addressList: [], //收货地址列表
       isSelected: 0, //选中的收获地址索引
-      shippingId: null, //地址的id
+      addressId: null, //地址的id
       selectedAddress: {}, //用户选择的地址
       newAddress: {
-        receiverName: "",
-        receiverMobile: "",
-        receiverProvince: "广东省",
-        receiverCity: "清远市",
-        receiverDistrict: "英德市",
-        receiverAddress: ""
-      } //新增地址
-    };
+        receiver_name: "",
+        receiver_mobile: "",
+        receiver_province: "",
+        receiver_city: "",
+        receiver_district: "",
+        receiver_address: ""
+      },
+    }
   },
   computed: {
+    ...mapGetters(['cart']),
     address() {
       let {
-        receiverProvince,
-        receiverCity,
-        receiverDistrict,
-        receiverAddress
+        receiver_province,
+        receiver_city,
+        receiver_district,
+        receiver_address
       } = this.selectedAddress;
-      return `${receiverProvince} ${receiverCity} ${receiverDistrict} ${receiverAddress}`;
+      return `${receiver_province} ${receiver_city} ${receiver_district} ${receiver_address}`;
     },
     // 收货人信息
     userInfo() {
-      let { receiverName, receiverMobile } = this.selectedAddress;
-      return `${receiverName} ${receiverMobile}`;
+      let { receiver_name, receiver_mobile } = this.selectedAddress;
+      return `${receiver_name} ${receiver_mobile}`;
     },
-    // 总金额
-    productTotal() {
-      return this.selectedProductList.reduce((prev, next) => {
-        return prev + next.productTotalPrice;
-      }, 0);
+    totalPrice(){
+      let totalPrice = 0;
+      for (let i = 0; i <this.$store.getters.cart.checkGoods.length;i++) {
+          const temp = this.$store.getters.cart.checkGoods[i];
+          totalPrice += temp.num * temp.product.shop_price
+      }
+      return totalPrice
     },
-    // 总数量
-    quantityTotal() {
-      return this.selectedProductList.reduce((prev, next) => {
-        return prev + next.quantity;
-      }, 0);
-    }
   },
   methods: {
-    // 下单
-    toOrder() {
-      let { shippingId } = this;
-      this.$axios
-        .post("/orders", {
-          shippingId
-        })
-        .then(res => {
-          console.log(res);
-          let { orderNo } = res;
-          this.$router.push({
-            name: "orderSuccess",
-            query: {
-              orderNo
+    async addNewAddress(){
+      const resp = await createAddress(this.newAddress)
+      if(resp.status==200){
+        this.modalShow = false
+        this.initAddress()
+      }
+    },
+    changeCity() {
+        var _this = this
+        var  item =''
+        _this.optionData.forEach(function (ele) {
+          if(ele.name===_this.newAddress.receiver_province){
+              item =ele
             }
-          });
-        });
+        })
+        this.cityArr = item.sub;//将选中的item的sub设置给cityArr 用于显示市
+        this.newAddress.receiver_city = item.sub[0].name;//默认选择第一个市
     },
-    // 获取购物车列表
-    getCart(resolve) {
-      getCartList().then(res => {
-        this.selectedProductList = res.cartProductVoList.filter(item => {
-          return item.productSelected;
-        });
-        resolve();
-      });
+    changeDistrict(){
+      var _this = this
+      var  item =''
+      _this.cityArr.forEach(function (ele) {
+
+        if(ele.name===_this.newAddress.receiver_city){
+          item =ele
+        }
+      })
+      this.districtArr = item.sub;//将选中的item的sub设置给cityArr 用于显示市
+      this.newAddress.receiver_district = item.sub[0].name;//默认选择第一个市
     },
-    // 获取收货地址
-    getAddress(resolve) {
-      this.$axios.get("/shippings").then(res => {
-        this.addressList = res.list.slice(0, 3);
-        resolve();
-      });
-    },
-    // 增加收货地址
-    addNewAddress() {
-      this.$axios.post("/shippings", this.newAddress).then(() => {
-        this.getAddress();
-        this.modalShow = false;
-      });
+    // 下单
+   async  toOrder() {
+     let arr = this.$store.getters.cart.checkGoods;
+     let data = []
+      arr.forEach(function (item) {
+          data.push(item.product.id)
+      })
+     const resp = await createOrder({
+        "uid":this.$store.getters.user.id,
+        "address_id":this.addressId,
+        "pids":data,
+      })
+     if(resp.status==200){
+       this.$router.push("/order/orderSuccess")
+     }
     },
     // 删除收货地址
-    delAddress() {
-      this.$axios.delete(`/shippings/${this.shippingId}`).then(() => {
-        this.getAddress();
-        this.delModalShow = false;
-      });
+    async delAddress() {
+      const resp = await deleteAddress(this.addressId)
+      if (resp.status==200){
+        this.delModalShow=false;
+        this.initAddress();
+      }
     },
     // 修改收货地址
     modifyAddress(item) {
       this.modalShow = true;
       this.newAddress = item;
+      // this.addressId=item.id;
     },
     // 选择收货地址
     chooseAddress(item, index) {
       this.isSelected = index + 1;
       this.selectedAddress = item;
-      this.shippingId = item.id;
+      this.addressId=item.id;
+    },
+    async initAddress(){
+      const  resp = await getAddress({
+        "uid": this.$store.getters.user.id
+      })
+      this.addressList = resp.data
+      if(resp.status==200){
+        this.showLoading =false
+      }
     }
   },
   components: {
@@ -313,13 +329,9 @@ export default {
     Modal
   },
   mounted() {
-    new Promise(resolve => {
-      this.getAddress(resolve);
-      this.getCart(resolve);
-    }).then(() => {
-      this.showLoading = false;
-    });
+    this.initAddress()
   }
+
 };
 </script>
 
@@ -653,7 +665,17 @@ export default {
         }
       }
     }
+    .aj-china-area{
+      .aj-select{
+        width: 100px;
+        margin: 0 15px;
+        padding: 0 10px;
+        width: 100px;
+        border: 1px solid #e0e0e0;
+      }
+    }
     .textarea-wrapper {
+      margin-top: 8px;
       width: 100%;
       .input-item {
         width: 100%;
@@ -666,7 +688,7 @@ export default {
           height: 100%;
           border: none;
           box-sizing: border-box;
-          padding: 8px 16px;
+          padding: 10px 16px;
           outline: none;
         }
       }

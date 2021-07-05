@@ -107,7 +107,7 @@ export default {
   }
   .dialog {
     position: fixed;
-    width: 660px;
+    width: 1000px;
     left: 50%;
     top: 0;
     transform: translate(-50%, 100px);

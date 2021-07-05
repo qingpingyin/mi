@@ -22,7 +22,7 @@
                                 <dd>
                                     <div class="inputbg">
                                         <label class="labelbox1">
-                                            <input @blur="regPwd"   v-model="password" class="set-password inputpwd" type="password" name="password" placeholder="请输入密码"/>
+                                            <input  v-model="password" class="set-password inputpwd" type="password" name="password" placeholder="请输入密码"/>
                                         </label>
                                     </div>
                                 </dd>
@@ -55,11 +55,13 @@
 
 <script>
     import Footer from "../components/RegisterFooter";
+    import {register} from "../api/user";
     export default {
         name: "registerPwd",
         data(){
             return{
                 phone:this.$route.params.phone,
+                code:this.$route.params.code,
                 password:'',
                 repassword:'',
                 flag:false,//显示错误信息
@@ -73,9 +75,23 @@
             }
         },
         methods:{
+            clear(path){
+                alert(path)
+            },
         //    提交
-            submitPwd(){
-
+            async submitPwd(){
+                try {
+                    const resp= await register({
+                        "mobile":this.phone,
+                        "code":this.code,
+                        "password":this.password,
+                    })
+                    if(resp.status==200){
+                        this.$router.replace("/login")
+                    }
+                }catch (err) {
+                    console.log(err)
+                }
             },
         //    密码正则验证
             regPwd(){
@@ -108,7 +124,20 @@
         },
         components:{
             Footer
-        }
+        },
+        created() {
+            //刷新页面返回输入手机号页面
+            window.addEventListener('load',()=>{
+                let msg = confirm('系统可能不会保存您所做的更改。');
+                if(msg === true){
+                    if (this.$route.path!=="/register"){
+                        this.$router.go(-2);
+                        this.$router.replace('/register')
+                    }
+                }
+
+            })
+        },
     }
 </script>
 

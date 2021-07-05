@@ -27,3 +27,25 @@ export function logout(params) {
     })
 }
 
+export function sendSms(data){
+    return request({
+        url:"/sendSms",
+        method:"post",
+        data
+    })
+}
+
+export function checkCode(data) {
+    return request({
+        url:"/checkCode",
+        method:"post",
+        data
+    })
+}
+export function register(data) {
+    return request({
+        url:"/singUpByMobile",
+        method:"post",
+        data
+    })
+}

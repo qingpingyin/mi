@@ -4,10 +4,11 @@
     <main>
       <div class="order-container">
         <!-- loading -->
-        <Loadding v-show="showLoading" />
+<!--        <Loadding v-show="showLoading" />-->
         <!-- 订单列表 -->
         <transition name="fade">
-          <div v-if="!showLoading">
+<!--          <div v-if="!showLoading">-->
+            <div>
             <div class="title">
               <h2>所有订单(仅显示最近5个订单)</h2>
               <p>请谨防钓鱼链接或诈骗电话</p>
@@ -15,16 +16,16 @@
             <div class="order-list-nav">全部有效订单</div>
             <div class="order-list-body" v-for="(item,index) in orderList" :key="index">
               <div class="order-status">
-                <span class="status">{{item.statusDesc}}</span>
+                <span class="status">待支付</span>
                 <div class="order-info">
                   <div>
-                    <span class="date">{{item.createTime}}</span>
+                    <span class="date">{{item.create_at}}</span>
                     <span class="split">|</span>
-                    <span class="receiver">{{item.receiverName}}</span>
+                    <span class="receiver">{{user.nike_name}}</span>
                     <span class="split">|</span>
-                    <span class="orderNo">订单号:{{item.orderNo}}</span>
+                    <span class="orderNo">订单号:{{item.id}}</span>
                     <span class="split">|</span>
-                    <span>{{item.paymentTypeDesc}}</span>
+                    <span>在线支付</span>
                   </div>
                   <div class="total-price">
                     应付金额:
@@ -39,15 +40,15 @@
                   <div class="btn">联系客服</div>
                 </div>
                 <ul>
-                  <li class="product-item" v-for="(productItem,i) in item.orderItemVoList" :key="i">
+                  <li class="product-item" v-for="(productItem,i) in item.order_item" :key="i">
                     <a href>
-                      <img :src="productItem.productImage" alt />
+                      <img :src="productItem.img_url" alt />
                     </a>
                     <div>
                       <p class="product-name">
-                        <a href>{{productItem.productName}}</a>
+                        <a href>{{productItem.title}}</a>
                       </p>
-                      <p class="price">{{productItem.currentUnitPrice}}x{{productItem.quantity}}</p>
+                      <p class="price">{{productItem.price}}*{{productItem.num}}</p>
                     </div>
                   </li>
                 </ul>
@@ -62,24 +63,36 @@
 <script>
 import OrderHeader from "../components/OrderHeader";
 import Loadding from "../components/Loadding";
+import {getOrderList} from "../api/order";
+import {mapGetters} from 'vuex'
 export default {
   name: "order-list",
   data() {
     return {
+      uid:this.$route.query.id,
       orderList: [],
-      showLoading: true
+      showLoading: true,
+      page:1,
+      pageSize:5
     };
   },
   components: {
     OrderHeader,
     Loadding
   },
-  mounted() {
-    this.$axios.get("/orders").then(res => {
-      console.log(res);
-      this.orderList = res.list.slice(0, 5);
-      this.showLoading = false;
-    });
+  computed:{
+    ...mapGetters(['user'])
+  },
+  async mounted() {
+
+     const resp = await getOrderList({
+       "uid":this.uid,
+       "page":this.page,
+       "pageSize":this.pageSize,
+     })
+      if(resp.status == 200){
+        this.orderList = resp.data
+      }
   }
 };
 </script>

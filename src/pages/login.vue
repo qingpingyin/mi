@@ -78,10 +78,13 @@
   methods: {
    async login() {
         //表单验证
-
-        await this.$store.dispatch('user/login',this.loginForm)
-        this.$router.push({ path: this.redirect || '/' })
-    }
+     try {
+       await this.$store.dispatch('user/login',this.loginForm)
+       this.$router.push({ path: this.redirect || '/' })
+     }catch (err) {
+       console.log(err)
+     }
+   }
   }
 };
 </script>

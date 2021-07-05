@@ -84,22 +84,20 @@ export default {
   data() {
     return {
       showMore: false,
-    orderId: this.$route.query.orderNo,
+      orderId: this.$route.query.orderNo,
       order: {}
     };
   },
   computed: {
     address() {
       let {
-        receiverName,
-        receiverMobile,
-        receiverProvince,
-        receiverCity,
-        receiverDistrict,
-        receiverAddress
-      } = this.order.shippingVo;
-      return `${receiverName} ${receiverMobile} ${receiverProvince} ${receiverCity} ${receiverDistrict} ${receiverAddress}`;
-    }
+        receiver_province,
+        receiver_city,
+        receiver_district,
+        receiver_address
+      } = this.selectedAddress;
+      return `${receiver_province} ${receiver_city} ${receiver_district} ${receiver_address}`;
+    },
   },
   methods: {
     getOrderInfo() {

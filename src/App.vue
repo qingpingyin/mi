@@ -15,16 +15,6 @@ export default {
   computed: {
   },
   async mounted() {
-    //判断用户是否登陆
-      let token = getToken();
-      if (token){
-          //获取用户信息
-          await this.$store.dispatch("user/getUserInfo")
-          //获取用户购物车信息
-          await this.$store.dispatch("cart/getCartList",{
-            "uid":this.$store.getters.user.id
-          })
-      }
 
   }
 };

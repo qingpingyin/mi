@@ -23,14 +23,14 @@
                             <label class="labelbox wap_resend_label err_label">
                                 <input v-model="code" class="resendcode" type="text" placeholder="请输入验证码" name="tickt"/>
                                 <span class="remain">
-                                    <a class="color333 send-status" @click="reckonTime" :class="{'disabled':BtnDisabled}" href="javascript:void(0)">{{BtnText}}</a>
+                                    <a class="color333 send-status" @click="reckonTime();restCode()" :class="{'disabled':BtnDisabled}" href="javascript:void(0)">{{BtnText}}</a>
                                 </span>
                             </label>
                         </div>
                         <div class="err_tip" :style="{'display':identifyCode}">
                             <div class="dis_box">
                                 <em class="icon_error"></em>
-                                <span>验证码错误或过期</span>
+                                <span>验证码错误或已过期</span>
                             </div>
                         </div>
                         <div class="sns_unavaliable">
@@ -53,6 +53,7 @@
 <script>
 
     import Footer from "../components/RegisterFooter";
+    import {checkCode, sendSms} from "../api/user";
     export default {
 
         name: "register_identify",
@@ -63,10 +64,10 @@
                 waitTime:60,
                 //发送验证码按钮
                 BtnDisabled:false,
-            //    判断验证码是否正确
+                //判断验证码是否正确
                 identifyCode:'none',
                 //验证码
-                code:''
+                code:this.$route.params.code
             }
         },
         computed:{
@@ -79,27 +80,35 @@
             }
         },
         methods:{
-            //验证 验证码
-            identifyCodeIsTrue(){
-                if (this.code ==="" ){
-                    this.identifyCode = 'block';
-                    return false;
-                }else{
-                    return true;
+            //去设置密码界面
+            async goSetPwdPage(){
+                try {
+                    const resp = await checkCode({
+                        "mobile": this.phone,
+                        "code": this.code
+                    })
+                    //首先验证 验证码是否正确
+                    if (resp.status == 200) {
+                        this.$router.push(
+                            {
+                                name: 'registerPwd',
+                                params: {
+                                    phone: this.phone,
+                                    code:this.code
+                                }
+                            })
+                    }else{
+                        this.identifyCode="display"
+                    }
+                }catch (err) {
+                    console.log(err)
                 }
             },
-            //去设置密码界面
-            goSetPwdPage(){
-            //    首先验证 验证码是否正确
-                if (this.identifyCodeIsTrue()){
-                    this.$router.push(
-                        {
-                        name:'registerPwd',
-                        params:{
-                        phone:this.phone
-                        }
-                    })
-                }
+            async restCode(){
+              const resp =   await sendSms({
+                    "mobile":this.phone
+                })
+              this.code = resp.data
             },
             //   已进入页面进行倒计时
             reckonTime(){
@@ -118,14 +127,14 @@
             //进入页面触发倒计时
             this.reckonTime();
 
-        //    刷新页面返回输入手机号页面
+            //刷新页面返回输入手机号页面
             window.addEventListener('load',()=>{
                 let msg = confirm('系统可能不会保存您所做的更改。');
                 if(msg === true){
                     if (this.$route.path!=="/register"){
-                        this.$router.push('/register')
+                        this.$router.go(-1);
+                        this.$router.replace("/register")
                     }
-
                 }
 
             })

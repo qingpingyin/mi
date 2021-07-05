@@ -3,11 +3,11 @@
     <order-header title="我的购物车" :tipsShow="true"></order-header>
     <div class="main-wrapper">
       <!-- 购物车 -->
-      <div class="cart-list" v-if="cart.cart_item.length > 0 ">
+      <div class="cart-list" v-if=" cart.count> 0 ">
           <!-- 购物车列表头 -->
           <div class="cart-list-header">
               <div class="col col-check">
-            <span class="btn-check" :class="{'checked':checkAll}"  @click="selectedAllClick(cart.cart_item)">
+            <span class="btn-check" :class="{'checked':isAllCheck}"  @click="checkAll(isAllCheck)">
               <i class="iconfont icon-right"></i>
             </span> 全选
               </div>
@@ -20,12 +20,13 @@
           </div>
           <!-- 购物车列表 -->
           <ul class="cart-list-body">
-              <li class="cart-list-item"  v-for="(item,index) in cart.cart_item" :key="index">
+              <li class="cart-list-item"  v-for="(item,index) in this.$store.getters.cart.cart_item" :key="index">
                   <div class="col col-check">
+
               <span
                       class="btn-check"
-                      :class="{'checked':checked}"
-                      @click="selectGood(item.product.id)"
+                      :class="{'checked':item.product.is_checked }"
+                      @click="checkChange(index,item.product.is_checked)"
               >
                 <i class="iconfont icon-right"></i>
               </span>
@@ -43,16 +44,16 @@
                       <div class="count">
                 <span
                         class="btn minus"
-                        @click="decreaseProduct(item.product.id,item.num)"
+                        @click="decreaseProduct(item.product.id,item.num,index)"
                 >-</span>
                           <input
                                   class="num"
                                   v-model="item.num"
-                                  @blur="changeQuantity(item.product.id,item.num,item.product.inventory)"
+                                  @blur="changeQuantity(item.product.id,item.num,item.product.inventory,index)"
                           />
                           <span
                                   class="btn plus"
-                                  @click="increaseProduct(item.product.id,item.num,item.product.inventory)"
+                                  @click="increaseProduct(item.product.id,item.num,item.product.inventory,index)"
                           >+</span>
                       </div>
                   </div>
@@ -70,28 +71,26 @@
               <div class="count">
                   <div class="total-mount">
                       共
-<!--                      <span class="hignlight">{{cartTotalQuantity}}</span>件商品，已选择-->
-<!--                      <span class="hignlight">{{selectedQuantity}}</span>件-->
+                      <span class="hignlight">{{cart.cart_item.length}}</span>件商品，已选择
+                      <span class="hignlight">{{checkNum}}</span>件
                   </div>
                   <div class="total-price">
                       合计:
-                      <span class="price">{{cart.total_price}}</span>元
+                      <span class="price">{{getTotalPrice}}</span>元
                   </div>
               </div>
-<!--              <router-link-->
-<!--                      class="btn-pay"-->
-<!--                      :class="{active:cartTotalPrice > 0}"-->
-<!--                      to="/order/orderComfirm"-->
-<!--              >去结算</router-link>-->
+              <router-link
+                      class="btn-pay"
+                      :class="{active:getTotalPrice > 0}"
+                      to="/order/orderComfirm"
+              >去结算</router-link>
           </div>
       </div>
       <!-- 购物车为空 -->
-      <div class="cart-empty" v-show=" cart.cart_item.length== 0 && showLoading == false">
+      <div class="cart-empty" v-show="cart.count==0">
         <h2>你的购物车还是空的!</h2>
         <div class="btn-tobuy" @click="$router.push({name:'index'})">马上去购物</div>
       </div>
-      <!-- loading -->
-<!--      <Loadding v-show="showLoading"/>-->
     </div>
     <nav-footer></nav-footer>
   </div>
@@ -99,7 +98,6 @@
 <script>
 import OrderHeader from "../components/OrderHeader";
 import NavFooter from "../components/NavFooter";
-import Loadding from "../components/Loadding";
 import {mapGetters} from 'vuex'
 import {deleteCart, updateNum} from "../api/cart";
 import {Message} from "element-ui";
@@ -108,22 +106,17 @@ export default {
   components: {
     OrderHeader,
     NavFooter,
-    Loadding
   },
   data() {
     return {
-        checkAll: false,
-        checked: [],
-        price:0,
-        count:0,
-        delModalShow: false,
-        showLoading: true,
+        showLoading:true,
     };
   },
   methods: {
     // 修改单个商品数量
-    async changeQuantity(productId, quantity, productStock) {
-      // 判断用户输入的是否为数字
+    async changeQuantity(productId, quantity, productStock,key) {
+      await this.$store.dispatch("cart/updateCart",{ key: key, prop: "check", val: true })
+        // 判断用户输入的是否为数字
       const NUM_REG = /^[0-9]+$/; //匹配正整数正则
       let isNumber = NUM_REG.test(quantity);
       if (isNumber) {
@@ -145,7 +138,7 @@ export default {
           return;
         }else{
             await updateNum(this.$store.getters.user.id,productId,quantity)
-            location.reload()
+            await this.$store.dispatch("cart/updateCart",{ key: key, prop: "num", val: quantity })
         }
       } else {
           Message({
@@ -157,17 +150,19 @@ export default {
       }
 
     },
-      // 商品减一
-      async decreaseProduct(productId, quantity) {
+    //   商品减一
+      async decreaseProduct(productId, quantity,key) {
+          await this.$store.dispatch("cart/updateCart",{ key: key, prop: "check", val: true })
           if (quantity === 1){
             return
           }else{
               await updateNum(this.$store.getters.user.id,productId,quantity-1)
-              location.reload()
+              await this.$store.dispatch("cart/updateCart",{ key: key, prop: "num", val: quantity-1})
           }
       },
       // 商品加一
-      async increaseProduct(productId, quantity, productStock) {
+      async increaseProduct(productId, quantity, productStock,key) {
+        await this.$store.dispatch("cart/updateCart",{ key: key, prop: "check", val: true })
           if (quantity === productStock) {
               Message({
                   message:"商品加入购物车数量超过限购数" ,
@@ -178,36 +173,83 @@ export default {
           }else{
 
               await updateNum(this.$store.getters.user.id,productId,quantity+1)
-              location.reload()
+              await this.$store.dispatch("cart/updateCart",{ key: key, prop: "num", val: quantity+1})
           }
       },
-    // 选择商品
-      selectGood(item){
-
-      },
+    // 删除商品
     async deleteProduct(pid) {
       await deleteCart(this.$store.getters.user.id,pid);
-        location.reload();
-
+      await this.$store.dispatch("cart/deleteCart",pid)
+      await this.$store.dispatch("cart/setCount")
     },
     // 全选按钮点击
-    selectedAllClick(item) {
-        this.checkAll = ! this.checkAll
-        if(this.checkAll){
-            this.price=0;
-            this.count=0;
-            item.forEach(function (val) {
-                this.checked.push(val.product.id)
-            })
-            this.checkAll = true
-
+    async checkAll(val) {
+        if(!val){
+            await this.$store.dispatch("cart/checkAll", true)
+        }else {
+            await this.$store.dispatch("cart/checkAll", false)
         }
+        this.checkGoods()
     },
+    async checkChange(key,val){
+        if(!val){
+            await this.$store.dispatch("cart/updateCart",{ key: key, prop: "check", val: true })
+        }else {
+            await this.$store.dispatch("cart/updateCart",{ key: key, prop: "check", val: false })
+        }
+        this.checkGoods()
+    },
+    async checkGoods(){
+        let checkGoods = [];
+        for (let i = 0; i < this.$store.getters.cart.cart_item.length; i++) {
+            const temp = this.$store.getters.cart.cart_item[i];
+            if (temp.product.is_checked) {
+                checkGoods.push(temp)
+            }
+        }
+        await this.$store.dispatch("cart/setCheckGoods",checkGoods)
+      }
   },
   computed:{
-      ...mapGetters(['cart','user']),
+      ...mapGetters(['cart']),
+      isAllCheck(){
+              for (let i = 0; i < this.$store.getters.cart.cart_item.length; i++) {
+                  const temp = this.$store.getters.cart.cart_item[i];
+                  // 只要有一个商品没有勾选立即return false;
+                  if (!temp.product.is_checked) {
+                      return false;
+                  }
+              }
+              return true;
+          },
+      checkNum(){
+          // 获取购物车勾选的商品数量
+          let totalNum = 0;
+          for (let i = 0; i < this.$store.getters.cart.cart_item.length; i++) {
+              const temp = this.$store.getters.cart.cart_item[i];
+              if (temp.product.is_checked) {
+                  totalNum ++;
+              }
+          }
+          return totalNum;
+      },
+      getTotalPrice () {
+          // 购物车勾选的商品总价格
+          let totalPrice = 0;
+          for (let i = 0; i < this.$store.getters.cart.cart_item.length; i++) {
+              const temp = this.$store.getters.cart.cart_item[i];
+              if (temp.product.is_checked) {
+                  totalPrice += temp.num * temp.product.shop_price
+              }
+          }
+          return totalPrice;
+      },
   },
-   mounted() {
+  async mounted() {
+       //获取用户购物车信息
+      await this.$store.dispatch("cart/getCartList",{
+          "uid":this.$store.getters.user.id
+      })
   }
 };
 </script>
