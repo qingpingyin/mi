@@ -19,11 +19,11 @@ export function getUserInfo() {
     })
 }
 
-export function logout(params) {
+export function logout(data) {
     return request({
         url:"/logout",
         method:"post",
-        params
+        data
     })
 }
 
@@ -47,5 +47,30 @@ export function register(data) {
         url:"/singUpByMobile",
         method:"post",
         data
+    })
+}
+
+export function forgetPassword(data) {
+    return request({
+        url:'/forgetPassword',
+        method:'put',
+        data
+    })
+}
+
+export function bindEmail(data) {
+    return request({
+        url:'/bindEmail',
+        method:"post",
+        data
+    })
+}
+
+
+export function validateEmail(params) {
+    return request({
+        "url":"/validate/email",
+        "method":'get',
+        params
     })
 }

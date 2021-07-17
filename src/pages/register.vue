@@ -65,7 +65,6 @@
       </div>
       <Footer></Footer>
     </div>
-    <Footer></Footer>
     <router-view></router-view>
   </div>
 </template>
@@ -125,9 +124,10 @@
         let path = this.$route.name
         return path === "register";
       },
-      components: {
-        Footer
-      }
+
+    },
+    components: {
+      Footer
     }
   }
 </script>

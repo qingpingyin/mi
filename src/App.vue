@@ -6,8 +6,6 @@
 
 <script>
 
-import {getToken} from "./utils/token";
-import {getUserInfo} from "./api/user";
 
 export default {
   name: "App",

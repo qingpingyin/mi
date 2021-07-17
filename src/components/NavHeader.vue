@@ -53,7 +53,7 @@
               <span class="username">{{user.nike_name}}</span>
               <ul class="userzone">
                 <li>
-                  <a href>个人中心</a>
+                  <a href="/#/self">个人中心</a>
                 </li>
                 <li>
                   <a href>评价晒单</a>

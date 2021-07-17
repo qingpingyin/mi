@@ -2,7 +2,7 @@
   <div class="home">
     <nav-header @register-click='modalShow = true'></nav-header>
     <router-view></router-view>
-    <nav-footer></nav-footer>
+    <NavFooter/>
     <!-- 协议声明模态框 -->
     <modal
     title="协议声明"

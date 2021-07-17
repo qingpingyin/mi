@@ -61,7 +61,7 @@
           <p class="total-price">总计：{{product.shop_price}}元</p>
         </div>
         <div class="addCart-box">
-          <span class="btn-add" @click="addToCart" v-if="user.real_name !== ''">加入购物车</span>
+          <span class="btn-add" @click="addToCart" v-if="user.id !== ''">加入购物车</span>
           <span class="btn-add" @click="$router.push({name:'login'})" v-else>登陆后购买</span>
           <span class="btn-like">收藏</span>
         </div>
@@ -169,9 +169,11 @@ export default {
        }
      //添加购物车 默认数量为1
      const cart = await addCart(data)
-     // 添加购物车成功
-     this.$router.push(`/addCartSuccess/${this.id}`);
-     location.reload()
+     if (cart.status == 200){
+       // 添加购物车成功
+       this.$router.push(`/addCartSuccess/${this.id}`);
+       location.reload()
+     }
     }
   },
   mounted() {

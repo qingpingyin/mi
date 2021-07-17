@@ -20,6 +20,11 @@ import Register from '../pages/register'
 import RegisterIdentify from '../pages/registerIdentify'
 import Login from '../pages/login'
 import RegisterPwd from '../pages/registerPwd'
+import restPassword from "../pages/restPassword";
+import restPasswordSms from "../pages/restPasswordSms";
+import setRestPassword from "../pages/setRestPassword";
+import self from "../pages/self";
+import validateEmail from "../pages/validateEmail";
 
 Vue.use(VueRouter);
 
@@ -52,6 +57,12 @@ const router = new VueRouter({
                     name: 'addCartSuccess',
                     component: addCartSuccess
                 },
+                {
+                    path: 'self',
+                    name: 'self',
+                    component: self
+                },
+
             ]
         },
         //订单列表 、订单确认、订单支付
@@ -85,12 +96,18 @@ const router = new VueRouter({
             name: 'cart',
             component: Cart
         },
+        {
+            path: '/validate/email/:token',
+            name: 'validateEmail',
+            component: validateEmail
+        },
         // 登录
         {
             path: '/login',
             name: 'login',
             component: Login
         },
+
         // 注册
         {
             path: '/register',
@@ -111,7 +128,22 @@ const router = new VueRouter({
                 }
             ]
         },
-
+        //忘记密码
+        {
+          path: '/restPassword',
+          name: 'restPassword',
+          component: restPassword,
+        },
+        {
+            path: '/restPasswordSms/:phone',
+            name: 'restPasswordSms',
+            component: restPasswordSms,
+        },
+        {
+            path: '/restPassword/:phone/:code',
+            name: 'setRestPassword',
+            component: setRestPassword
+        },
         {
             path: '/orderPay',
             name: 'orderPay',

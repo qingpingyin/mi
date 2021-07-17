@@ -34,9 +34,9 @@
             <p class="other-way">
               <a href>手机短信登录/注册</a>
               <span>
-                <a href>立即注册</a>
+                <a href="/#/register">立即注册</a>
                 <span class="split">|</span>
-                <a href>忘记密码</a>
+                <a href="#/restPassword">忘记密码</a>
               </span>
             </p>
           </div>

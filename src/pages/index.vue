@@ -162,7 +162,7 @@ export default {
        //0 :递归查询 1 :header-nav
        "is_nav":0
      })
-     this.categories =categories.data
+     this.categories = categories.data
      //促销列表
 
      //手机列表

@@ -14,6 +14,7 @@ export function createAddress(data) {
     return request({
         "url":"/address",
         "method":"post",
+        data
     })
 }
 

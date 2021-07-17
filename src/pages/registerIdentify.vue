@@ -27,10 +27,10 @@
                                 </span>
                             </label>
                         </div>
-                        <div class="err_tip" :style="{'display':identifyCode}">
+                        <div class="err_tip" v-if="flag">
                             <div class="dis_box">
                                 <em class="icon_error"></em>
-                                <span>验证码错误或已过期</span>
+                                <span>{{err_message}}</span>
                             </div>
                         </div>
                         <div class="sns_unavaliable">
@@ -64,8 +64,9 @@
                 waitTime:60,
                 //发送验证码按钮
                 BtnDisabled:false,
+                err_message:'',
                 //判断验证码是否正确
-                identifyCode:'none',
+                flag:false,
                 //验证码
                 code:this.$route.params.code
             }
@@ -88,7 +89,7 @@
                         "code": this.code
                     })
                     //首先验证 验证码是否正确
-                    if (resp.status == 200) {
+                    if (!resp.data.is_register) {
                         this.$router.push(
                             {
                                 name: 'registerPwd',
@@ -98,7 +99,8 @@
                                 }
                             })
                     }else{
-                        this.identifyCode="display"
+                        this.err_message=resp.msg
+                        this.flag=true
                     }
                 }catch (err) {
                     console.log(err)
