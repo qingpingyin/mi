@@ -63,7 +63,7 @@
         <div class="addCart-box">
           <span class="btn-add" @click="addToCart" v-if="user.id !== ''">加入购物车</span>
           <span class="btn-add" @click="$router.push({name:'login'})" v-else>登陆后购买</span>
-          <span class="btn-like">收藏</span>
+          <span class="btn-like" @click="collect(product.id)">收藏</span>
         </div>
       </div>
     </div>
@@ -85,6 +85,7 @@ import ProductParams from "../components/ProductParams";
 import {mapGetters} from "vuex";
 import {getProductDetail} from "../api/product";
 import {addCart} from "../api/cart";
+import {createCollect} from "../api/collect";
 
 export default {
   name: "detail",
@@ -155,6 +156,13 @@ export default {
     ])
   },
    methods: {
+    async collect(pid){
+      const resp= await createCollect({
+        "uid":this.$store.getters.user.id,
+        "pid":pid
+      })
+      console.log(resp)
+    },
    async getProduct() {
       const product = await getProductDetail({
         "pid":this.id
@@ -385,18 +393,20 @@ export default {
     }
   }
   .tips-box {
-    background-color: #f5f5f5;
+    background-color: #F5F5F5;
     padding-bottom: 50px;
     .wrapper {
       width: 1226px;
       margin: 0 auto;
       h3 {
         font-size: 22px;
-        color: #333;
-        padding: 22px 0;
-        font-weight: normal;
+        font-weight: 400;
+        margin-top: 30px;
+        margin-bottom: 0;
+        padding: 1em 0;
       }
       p {
+        margin: 30px 0px 0px 20px;
         padding: 40px 88px;
         background-color: #fff;
         font-size: 16px;

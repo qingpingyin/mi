@@ -42,58 +42,127 @@
             </a>
           </li>
         </ul>
-        <!-- 发布会活动海报 -->
-        <a href="javascript:;" class="activity-link">
-          <img v-lazy="'https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/431e5fd6bfd1b67d096928248be18303.jpg?thumb=1&w=1533&h=150&f=webp&q=90'" alt />
-        </a>
       </div>
     </section>
-    <!-- 商品列表部分 -->
-    <section class="product-list-area">
-      <div class="container">
-        <div class="product-list-wrapper">
-          <!-- 分类标题 -->
-          <h3 class="category-title">手机</h3>
-          <span class="more">查看更多</span>
-          <!-- 容器 -->
-          <section>
-            <!-- 主推产品 -->
-            <div class="import-product">
-              <a href="javascript:;">
-                <img v-lazy="'https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c583f2edc613f1be20fa415910b13ce3.jpg?thumb=1&w=293&h=768&f=webp&q=90'" alt />
-              </a>
+    <div class="page-main">
+        <div class="container">
+            <div class="home-banner-box">
+                <a >
+                  <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/431e5fd6bfd1b67d096928248be18303.jpg?thumb=1&w=1533&h=150&f=webp&q=90" alt=""/>
+                </a>
             </div>
-            <!-- 产品列表 -->
-            <div class="product-list">
-              <ul >
-                <li v-for="(item,index) in phoneList" :key="index">
-                  <a :href="'/#/detail/'+item.id" target="_blank">
-                    <img v-lazy="item.img_url" alt />
-                    <p class="product-name">{{item.title}}</p>
-                    <p class="product-subtitle">{{item.description}}</p>
-                    <div class="price">
-                      <p class="product-price">{{item.shop_price}}元起</p>
-                      <p class="product-price-market" v-if="item.market_price != 0">
-                        <del>
-                          {{item.market_price}}元
-                        </del>
-                      </p>
-                    </div>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </section>
-        </div>
-      </div>
-    </section>
+          <!--手机商品列表-->
+          <div class="home-brick-box">
+              <div class="box-hd">
+                  <h2 class="title">手机</h2>
+                  <div class="more">
+                      <a>
+                        查看更多
+                        <i class="el-icon-arrow-right"></i>
+                      </a>
+                  </div>
+              </div>
+              <div class="box-bd clearfix">
+                  <div class="row">
+                      <div class="list-left">
+                          <ul class="brick-promo-list clearfix">
+                              <li>
+                                  <a>
+                                      <img src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/c583f2edc613f1be20fa415910b13ce3.jpg?thumb=1&w=293&h=768&f=webp&q=90"/>
+                                  </a>
+                              </li>
+                          </ul>
+                      </div>
+                    <!--right list-->
+                    <MyList :list="phoneList" :is-more="false"></MyList>
+                  </div>
+              </div>
+          </div>
 
+            <div class="home-banner-box">
+                <a >
+                    <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/41d16e66381cfeda7b6b39ab67678d5e.jpg?thumb=1&w=1533&h=150&f=webp&q=90" alt=""/>
+                </a>
+            </div>
+            <!--电视产品列表-->
+            <div class="home-brick-box">
+                <div class="box-hd">
+                    <h2 class="title">家电</h2>
+                    <div class="more">
+                        <MyMenu :val="2" @fromChild="getChildMsg">
+                            <span slot="1">热门</span>
+                            <span slot="2">电视影音</span>
+                        </MyMenu>
+                    </div>
+                </div>
+                <div class="box-bd clearfix">
+                    <div class="row">
+                        <div class="span4">
+                            <ul class="brick-promo-list clearfix">
+                                <li>
+                                    <a>
+                                        <img  src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/116fc43816b87192be4e67cf762e8da5.jpeg?thumb=1&w=293&h=375&f=webp&q=90" alt/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        <img src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/dfbdabe36b2d630d57a015e6fb5eb3ea.jpg?thumb=1&w=293&h=375&f=webp&q=90" alt/>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <MyList :list="applianceList" :is-more="true"></MyList>
+                    </div>
+                </div>
+            </div>
+
+            <div class="home-banner-box">
+                <a >
+                    <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/59e8fc8ba9718c266882719fb4bbcedd.jpg?thumb=1&w=1533&h=150&f=webp&q=90" alt=""/>
+                </a>
+            </div>
+            <!--智能商品列表-->
+            <div class="home-brick-box">
+                <div class="box-hd">
+                    <h2 class="title">智能</h2>
+                    <div class="more">
+                        <MyMenu :val="3" @fromChild="getChildMsg2">
+                            <span slot="1">热门</span>
+                            <span slot="2">路由器</span>
+                            <span slot="3">笔记本</span>
+                        </MyMenu>
+                    </div>
+                </div>
+                <div class="box-bd clearfix">
+                    <div class="row">
+                        <div class="span4">
+                            <ul class="brick-promo-list clearfix">
+                                <li>
+                                    <a>
+                                        <img  src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/ffe114f73fac3a45e5622c3eff56106b.jpg?thumb=1&w=293&h=375&f=webp&q=90" alt/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a>
+                                        <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/a660ce095e8f553a9ed1515265f4e9fc.jpg?thumb=1&w=293&h=375&f=webp&q=90" alt/>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <MyList :list="intelligenceList" is-more="true"></MyList>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
   </div>
 </template>
 <script>
 import "swiper/dist/css/swiper.css";
 import { swiper, swiperSlide } from "vue-awesome-swiper";
+import MyMenu from "../components/MyMenu";
+import MyList from "../components/MyList";
 import {initCarousel} from "../api/carousel";
 import {getCate} from "../api/cate";
 import {getProduct} from "../api/product";
@@ -147,16 +216,73 @@ export default {
         }
       ],
       //   手机商品列表
-      phoneList: [],
-      //categories
-      categories: []
+      phoneList: [],//手机列表
+      categories: [],//商品列表
+      miTvList: [], // 小米电视商品列表
+      applianceList: [], // 家电商品列表
+      applianceHotList: [], //热门家电商品列表
+      intelligenceList:[],  //智能商品列表
+      intelligenceHotList:[],//智能 热门列表
+      routersList:[],//智能 路由器
+      noteBookList:[],//智能 笔记本
+      applianceActive: 1, // 家电当前选中的商品分类
+      intelligenceActive:1,//智能分类
     };
   },
+  watch:{
+    // 家电当前选中的商品分类，响应不同的商品数据
+    applianceActive: function(val) {
+      // 页面初始化的时候把applianceHotList(热门家电商品列表)直接赋值给applianceList(家电商品列表)
+      // 所以在切换商品列表时判断applianceHotList是否为空,为空则是第一次切换,把applianceList赋值给applianceHotList
+      if (this.applianceHotList == "") {
+        this.applianceHotList = this.applianceList;
+      }
+      if (val == 1) {
+        // 1为热门商品
+        this.applianceList = this.applianceHotList;
+        return;
+      }
+      if (val == 2) {
+        // 2为电视商品
+        this.applianceList = this.miTvList;
+        return;
+      }
+    },
+      intelligenceActive(val){
+          if (this.intelligenceHotList == "") {
+              this.intelligenceHotList = this.intelligenceList;
+          }
+          if (val == 1) {
+              // 1为热门商品
+              this.intelligenceList = this.intelligenceHotList;
+              return;
+          }
+          if (val == 2) {
+              //路由
+              this.intelligenceList = this.routersList;
+              return;
+          }
+          if(val==3){
+              //笔记本
+              this.intelligenceList =this.noteBookList
+              return
+          }
+      }
+  },
+  methods:{
+    // 获取家电模块子组件传过来的数据
+    getChildMsg(val) {
+      this.applianceActive = val;
+    },
+    // 获取配件模块子组件传过来的数据
+    getChildMsg2(val) {
+      this.intelligenceActive = val;
+    }
+  },
    async mounted() {
-
      //轮播图
-     const data = await initCarousel()
-     this.swiperSlides =data.data
+     const swiper = await initCarousel()
+     this.swiperSlides =swiper.data
      //类别
      const categories = await getCate({
        //0 :递归查询 1 :header-nav
@@ -169,14 +295,58 @@ export default {
      const phoneList = await getProduct({
        "page":1,
        "pageSize":8,
-       "cid":1
+       "cid":1,
+       "is_recursion":true
      })
      this.phoneList = phoneList.data
 
+     //家电 热门
+     const lianceList = await getProduct({
+         "page":1,
+         "pageSize":7,
+         "cid":4,
+         "is_recursion":true
+     })
+     this.applianceList = lianceList.data
+     //家电 电视
+     const tvList = await getProduct({
+         "page":1,
+         "pageSize":7,
+         "cid":12,
+         "is_recursion":false
+     })
+     this.miTvList=tvList.data
+     //智能 热门
+     const intelligence = await getProduct({
+         "page":1,
+         "pageSize":7,
+         "cid":6,
+         "is_recursion":true
+     })
+       console.log(intelligence.data)
+     this.intelligenceList=intelligence.data
+     //智能 路由器
+     const routers = await getProduct({
+         "page":1,
+         "pageSize":7,
+         "cid":15,
+         "is_recursion":false
+     })
+     this.routersList=routers.data
+       //智能 路由器
+     const noteBook = await getProduct({
+         "page":1,
+         "pageSize":7,
+         "cid":13,
+         "is_recursion":false
+    })
+    this.noteBookList=noteBook.data
   },
   components: {
     swiper,
-    swiperSlide
+    swiperSlide,
+    MyMenu,
+    MyList
   }
 };
 </script>
@@ -374,140 +544,159 @@ export default {
           }
         }
       }
-      // 活动
-      .activity-link {
-        display: inline-block;
-        background-color: #f5f5f5;
-        width: 100%;
-        height: 120px;
-        margin: 31px 0 50px;
-        position: relative;
-        img[lazy="loading"] {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          width: 140px;
-          height: 140px;
-        }
-        img[lazy="loaded"] {
-          width: 100%;
-          height: 100%;
-        }
-      }
     }
   }
-  //   产品部分
-  .product-list-area {
+  .page-main{
     background-color: #f5f5f5;
-    .container {
+    padding-top: 4px;
+    padding-bottom: 12px;
+    .container{
       width: 1226px;
-      margin: 0 auto;
-      .product-list-wrapper {
-        .category-title {
-          font-size: 22px;
-          color: #333;
-          padding: 30px 0 20px;
+      margin-right: auto;
+      margin-left: auto;
+      cursor: pointer;
+      .home-banner-box{
+        height: 120px;
+        margin: 22px 0;
+        overflow: hidden;
+        a{
+          color: #757575;
+          img{
+            width: 1226px;
+            aspect-ratio: auto 1226 / 120;
+            height: 120px;
+          }
         }
-        .more {
+      }
+      .home-brick-box{
+        margin-bottom: 8px;
+        .box-hd{
+          position: relative;
+          height: 58px;
+          -webkit-font-smoothing: antialiased;
+          .title{
+            margin: 0;
+            font-size: 22px;
+            font-weight: 200;
+            line-height: 58px;
+            color: #333;
+          }
+          .more{
+            position: absolute;
+            top: 0;
+            right: 0;
+            a{
+              font-size: 16px;
+              line-height: 58px;
+              color: #424242;
+              -webkit-transition: all .4s;
+              transition: all .4s;
+              i{
+                width: 12px;
+                height: 12px;
+                padding: 4px;
+                margin-left: 6px;
+                border-radius: 16px;
+                font-size: 12px;
+                line-height: 12px;
+                background: #b0b0b0;
+                color: #fff;
+                vertical-align: 1px;
+                -webkit-transition: all .4s;
+                transition: all .4s;
+              }
+                &:hover{
+                    color: #f25807;
+                    i{
+                        background-color: #f25807;
+                    }
+                }
+            }
+          }
         }
-        section {
-          display: flex;
-          justify-content: space-between;
-          //   添加过渡
-          a {
-            transition: all 0.3s;
-            &:hover {
-              transform: translateY(-3px);
-              box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            }
-          }
-          // 重磅产品
-          .import-product {
-            margin-right: 16px;
-            a {
-              display: inline-block;
-              width: 224px;
-              height: 619px;
-              background-color: #fff;
-              position: relative;
-              img[lazy="loading"] {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                width: 140px;
-                height: 140x;
-              }
-              img[lazy="loaded"] {
-                /*your style here*/
-                width: 224px;
-                height: 619px;
-              }
-            }
-          }
-          // 产品列表
-          .product-list {
-            ul {
-              li {
-                display: inline-block;
-                margin-right: 14px;
-                margin-bottom: 14px;
-                &:nth-last-child(1) {
-                  margin-right: 0;
+        .box-bd{
+            height: 628px;
+            .row{
+                margin-left: -14px;
+                .list-left {
+                    width: 234px;
+                    float: left;
+                    margin-left: 14px;
+                    min-height: 1px;
+
+                    ul {
+                        margin: 0 0 -14px -14px;
+                        height: 614px;
+                        padding: 0;
+                        list-style-type: none;
+
+                        li {
+                            height: 614px;
+                            position: relative;
+                            z-index: 1;
+                            float: left;
+                            width: 234px;
+                            margin-left: 14px;
+                            margin-bottom: 14px;
+                            background: #fff;
+                            -webkit-transition: all .2s linear;
+                            transition: all .2s linear;
+
+                            a {
+                                display: block;
+                                width: 100%;
+                                height: 100%;
+
+                                img {
+                                    height: 614px;
+                                    width: 234px;
+                                }
+                            }
+                        }
+                    }
                 }
-                a {
-                  box-sizing: border-box;
-                  display: inline-block;
-                  width: 232px;
-                  height: 302px;
-                  background-color: #fff;
-                  display: flex;
-                  flex-direction: column;
-                  justify-content: center;
-                  align-items: center;
-                  padding: 50px 0 30px;
-                  text-decoration: none;
-                  img {
-                    width: auto;
-                    height: 140px;
-                    padding: 0 0 10px;
-                  }
-                  .product-name {
-                    font-size: 14px;
-                    color: #333;
-                    text-align: center;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    /*font-weight: bold;*/
-                    padding: 10px 0;
-                  }
-                  .product-subtitle {
-                    font-size: 12px;
-                    color: #999;
-                    /*padding: 0 0 20px;*/
-                  }
-                  .price {
-                      p{
-                        display: inline-block;
-                        margin:0px 10px 0px  10px;
-                        font-size: 14px;
-                      }
-                  }
-                  .product-price {
-                    color: #f60;
-                  }
-                  .product-price-market{
-                      color: #999;
-                  }
+                .span4{
+                    width: 234px;
+                    float: left;
+                    margin-left: 14px;
+                    min-height: 1px;
+                    .brick-promo-list{
+                        margin: 0 0 -14px -14px;
+                        height: 614px;
+                        padding: 0;
+                        list-style-type: none;
+                        li{
+                            height: 300px;
+                            padding: 0;
+                            position: relative;
+                            z-index: 1;
+                            float: left;
+                            width: 234px;
+                            margin-left: 14px;
+                            margin-bottom: 14px;
+                            background: #fff;
+                            -webkit-transition: all .2s linear;
+                            transition: all .2s linear;
+                            a{
+                                display: block;
+                                width: 100%;
+                                height: 100%;
+                                img{
+                                    height: 300px;
+                                    width: 234px;
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
         }
       }
     }
   }
+    .clearfix:after, .clearfix:before {
+        content: " ";
+        display: table;
+    }
 }
 </style>

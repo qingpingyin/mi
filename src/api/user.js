@@ -70,7 +70,14 @@ export function bindEmail(data) {
 export function validateEmail(params) {
     return request({
         "url":"/validate/email",
-        "method":'get',
+        "method":"get",
         params
+    })
+}
+export function updateUser(data) {
+    return request({
+        "url":"/updateUser",
+        "method":"put",
+        data
     })
 }

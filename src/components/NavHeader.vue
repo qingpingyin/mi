@@ -53,13 +53,15 @@
               <span class="username">{{user.nike_name}}</span>
               <ul class="userzone">
                 <li>
-                  <a href="/#/self">个人中心</a>
+                  <a href="/#/self/userInfo">个人中心</a>
                 </li>
                 <li>
                   <a href>评价晒单</a>
                 </li>
                 <li>
-                  <a href>我的喜欢</a>
+                   <router-link :to="{path:'/self/favourite',query:{id:user.id}}">
+                      <a href="">我的喜欢</a>
+                    </router-link>
                 </li>
                 <li>
                   <a href="javascript:;" @click="logout">退出登录</a>
@@ -94,7 +96,7 @@
                 <span class="item-name" >{{categoryItem.categories_name}}</span>
             <ul class="children" v-if="categoryItem.parent_id > 0">
               <li   v-for="(item,i) in categoryItem.product" :key="i" class="product-item">
-                <a href="javascript:;">
+                <a :href="'/#/detail/'+item.id" target="_blank">
                   <img :src="item.img_url" class="product-img" />
                   <p class="product-name">{{item.title}}</p>
                   <p class="product-price">{{item.shop_price}}元起</p>
@@ -393,7 +395,7 @@ export default {
                 font-size: 12px;
                 text-decoration: none;
                 .product-img {
-                  margin-top: 26px;
+                  margin-top: 18px;
                   width: auto;
                   height: 111px;
                 }

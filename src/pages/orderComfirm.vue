@@ -166,10 +166,10 @@
               class="input-item"
               :class="{'input-focus':target == 3,'input-active':newAddress.receiver_address != ''}"
             >
-              <label for="name">详细地址</label>
+              <label for="address-name">详细地址</label>
               <textarea
                 :placeholder="target == 3?'详细地址，路名或街道名称，门牌号':''"
-                id="name"
+                id="address-name"
                 @focus="target = 3"
                 @blur="target = 0"
                 v-model="newAddress.receiver_address"
@@ -666,12 +666,15 @@ export default {
       }
     }
     .aj-china-area{
+      color: #757575;
       .aj-select{
         width: 100px;
         margin: 0 15px;
         padding: 0 10px;
-        width: 100px;
         border: 1px solid #e0e0e0;
+        color: #757575;
+        height: 30px;
+        border-radius: 4px;
       }
     }
     .textarea-wrapper {

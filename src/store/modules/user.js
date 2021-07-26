@@ -10,6 +10,7 @@ const getDefaultState = () => {
         sub: '',
         email:'',
         nike_name:'',//昵称
+        avatar:'',
         exp: 0 // 过期时间
     }
 }
@@ -39,6 +40,7 @@ const mutations = {
         state.email=user.email
         state.mobile=user.mobile
         state.nike_name=user.nike_name
+        state.avatar = user.avatar
 
     }
 }
@@ -60,6 +62,7 @@ const actions = {
         try {
             const data  = await getUserInfo()
             commit('SET_USER_INFO', data.data)
+            localStorage.setItem("user",JSON.stringify(data.data))
             return Promise.resolve()
         } catch (err) {
             return Promise.reject(err)

@@ -62,7 +62,6 @@
 </template>
 <script>
 import OrderHeader from "../components/OrderHeader";
-import Loadding from "../components/Loadding";
 import {getOrderList} from "../api/order";
 import {mapGetters} from 'vuex'
 export default {
@@ -78,7 +77,6 @@ export default {
   },
   components: {
     OrderHeader,
-    Loadding
   },
   computed:{
     ...mapGetters(['user'])

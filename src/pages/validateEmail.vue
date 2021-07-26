@@ -20,8 +20,17 @@
         methods:{
             async validate(){
                 const resp = await validateEmail({
-                   "token":this.token
+                   "token":this.token,
                 })
+                if (resp.status == 200) {
+                    setInterval(()=>{
+                        this.message = "绑定/解绑邮箱成功"
+                        this.$router.push({
+                            name: 'userInfo', params: {}
+                        })
+                        this.$store.dispatch("user/getUserInfo")
+                    },3000)
+                }
             }
         },
         mounted() {

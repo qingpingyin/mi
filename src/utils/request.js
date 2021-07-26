@@ -8,17 +8,82 @@ const service =axios.create({
     timeout:1000*5
 })
 
+const reqList =[];
+const cancelArr =[];
+
+const stopRepeatRequest =(url,{data,params,intercept,method})=> {
+    if(reqList.length>1){
+        if(intercept !==2){
+            if(intercept===1){
+                for (let i = reqList.length-2; i >= 0 ; i--) {
+                    if(reqList[i].url===`${url}`){
+                        cancelArr[i]();
+                        cancelArr.splice(i,1);
+                        reqList.splice(i,1);
+                    }
+                }
+            }else {
+                const last = reqList.length-1;
+                for (let i = reqList.length-2; i >= 0 ; i--) {
+                    if (reqList[i].url === `${url}` && reqList[i].data === JSON.stringify(data) && method === 'post') {
+                        console.log('post', reqList[i].url);
+                        cancelArr[last]();
+                        cancelArr.pop();
+                        reqList.pop();
+                        break;
+                    } else if (reqList[i].url === `${url}` && reqList[i].params === JSON.stringify(params) && method === 'get') {
+                        console.log('get', reqList[i].url);
+                        cancelArr[last]();
+                        cancelArr.pop();
+                        reqList.pop();
+                    }
+
+                }
+            }
+        }
+    }
+}
+const clearRequest = function ({ url, data }) {
+    for (let i = reqList.length - 1; i >= 0; i--) {
+        if (reqList[i].url === url && reqList[i].data === data) {
+            reqList.splice(i, 1);
+            cancelArr.splice(i, 1);
+            break; // 每个request只清除自己，所以 break
+        }
+    }
+};
+
 //请求拦截
 service.interceptors.request.use(config=>{
+
     const token = getToken("access_token");
     if(token){
         config.headers["Authorization"]=token;
     }
+    config['cancelToken'] = new axios.CancelToken(c => {
+        cancelArr.push(c);
+    });
+    let url = config.url.startsWith('/') ? '' : '/';
+    url += config.url;
+    console.log(url)
+    reqList.push({
+        url: `${url}`,
+        data: JSON.stringify(config.data),
+        params: config.params,
+        method: config.method
+    });
+    stopRepeatRequest(url, config);
     return config
+},error => {
+    return Promise.reject(error)
 })
 //响应拦截
 service.interceptors.response.use(
     response => {
+        // 增加延迟，相同请求不得在短时间内重复发送
+        setTimeout(() => {
+            clearRequest(response.config);
+        }, 1000);
         const  res  = response.data
         // 正常情况
         if (res.status !== 200) {
@@ -71,6 +136,9 @@ service.interceptors.response.use(
                     duration: 5 * 1000
                 })
                 break
+        }
+        if (axios.isCancel(error)) {
+            console.log('打断请求成功', error);
         }
         return Promise.reject(error)
     }

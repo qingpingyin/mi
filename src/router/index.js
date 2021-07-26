@@ -25,12 +25,15 @@ import restPasswordSms from "../pages/restPasswordSms";
 import setRestPassword from "../pages/setRestPassword";
 import self from "../pages/self";
 import validateEmail from "../pages/validateEmail";
+import UserInfo from "../components/UserInfo";
+import Account from "../components/Account";
+import Favourite from "../components/Favourite";
+import Address from "../components/Address";
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
     routes: [
-        //首页 、产品页 、详情页 、加购物车成功页
         {
             path: '/',
             name: 'home',
@@ -60,7 +63,29 @@ const router = new VueRouter({
                 {
                     path: 'self',
                     name: 'self',
-                    component: self
+                    component: self,
+                    children:[
+                        {
+                            path:'userInfo',
+                            name:'UserInfo',
+                            component:UserInfo
+                        },
+                        {
+                            path: 'account',
+                            name: 'Account',
+                            component: Account
+                        },
+                        {
+                            path: 'favourite',
+                            name: 'Favourite',
+                            component:Favourite
+                        },
+                        {
+                            path: 'address',
+                            name: 'Address',
+                            component: Address
+                        }
+                    ]
                 },
 
             ]

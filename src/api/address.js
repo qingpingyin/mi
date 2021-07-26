@@ -22,6 +22,5 @@ export function deleteAddress(params) {
     return request({
         "url":"/address/"+params,
         "method":"delete",
-        params
     })
 }
