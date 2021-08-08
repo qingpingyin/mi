@@ -1,10 +1,12 @@
 import axios from "axios";
+import store from "../store";
 import {getToken} from "./token";
 import {Message,MessageBox} from "element-ui";
+import {baseApi} from '../config'
 
 
 const service =axios.create({
-    baseURL:"/",
+    baseURL: baseApi,
     timeout:1000*5
 })
 
@@ -65,7 +67,6 @@ service.interceptors.request.use(config=>{
     });
     let url = config.url.startsWith('/') ? '' : '/';
     url += config.url;
-    console.log(url)
     reqList.push({
         url: `${url}`,
         data: JSON.stringify(config.data),
@@ -97,8 +98,8 @@ service.interceptors.response.use(
         return res
     },
     async error => {
-        const { status, data } = error.response
-        switch (status) {
+        const  resp  = error.response
+        switch (resp.status) {
             case 500:
                 Message({
                     message: '系统错误',
@@ -114,17 +115,17 @@ service.interceptors.response.use(
                 })
                 break
             case 401:
-                 await MessageBox.confirm(data.msg, '登录过期，请重新登录', {
-                    confirmButtonText: '重新登录',
+                 await MessageBox.confirm("请登陆后再操作", '权限不足', {
+                    confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 })
-                await this.$store.dispatch('user/resetToken')
+                await store.dispatch('user/resetToken')
                 location.reload()
                 break
             case 400:
                 Message({
-                    message: data.msg,
+                    message: resp.data.msg,
                     type: 'error',
                     duration: 5 * 1000
                 })

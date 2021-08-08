@@ -5,8 +5,9 @@ import VueLazyload from 'vue-lazyload'
 import store from './store'
 import NProgress from 'nprogress'
 import './assets/nprogress/nprogress.css'
-import ElementUI from 'element-ui'
+import ElementUI, {Message} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import {getToken} from "./utils/token";
 
 Vue.use(ElementUI)
 
@@ -18,11 +19,49 @@ NProgress.configure({
   minimum: 0.3 // 初始化时的最小百分比
 })
 
-router.beforeEach((to, from, next) => {
+
+
+const WhiteList = ["/","/index","/login","/register","/register/identify","/register/setPwd","/detail","/cate","/restPassword","/restPasswordSms","/setPassword","/validate/email"]
+//全局拦截器
+router.beforeEach(async(to, from, next) => {
   // 每次切换页面时，调用进度条
   NProgress.start();
 
-  // 这个一定要加，没有next()页面不会跳转的。这部分还不清楚的去翻一下官网就明白了
+  const hasToken =getToken()
+
+  if(hasToken){
+    if (to.path === '/login') {
+      // if is logged in, redirect to the home page
+      next({ path: '/index' })
+      NProgress.done()
+    }else{
+      if(store.getters.user.id==0){
+        await store.dispatch('user/getUserInfo')
+      }
+      if (store.getters.user.id == 0) {
+        await store.dispatch('user/resetToken')
+        next(`/login`)
+        NProgress.done()
+        return
+      }
+      next()
+    }
+  }else{
+    //no token
+    if (WhiteList.indexOf(to.path) !== -1) {
+      // in the free login whitelist, go directly
+      next()
+    }else{
+      Message({
+        message: '请登录之后再操作',
+        type: 'warning',
+        duration: 5 * 1000
+      })
+      next("/index")
+      NProgress.done()
+      return
+    }
+  }
   next();
 });
 router.afterEach(() => {

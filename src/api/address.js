@@ -9,7 +9,13 @@ export function getAddress(params) {
         params
     })
 }
-
+export function getAddressById(params) {
+    return request({
+        "url":"/addressById",
+        "method":"get",
+        params
+    })
+}
 export function createAddress(data) {
     return request({
         "url":"/address",

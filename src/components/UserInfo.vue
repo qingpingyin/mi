@@ -7,7 +7,9 @@
                            <div class="user-card">
                            <h2  class="username">{{user.nike_name}}</h2>
                            <p  class="tip">晚上好～</p>
-                           <a  href="/#/self/account" class="link">修改个人信息 &gt;</a>
+                               <router-link :to="{name:'Account',query:{id:user.id}}">
+                                   <a  href="" class="link">修改个人信息 &gt;</a>
+                               </router-link>
                            <img  src="https://cdn.cnbj1.fds.api.mi-img.com/user-avatar/888918f7-4787-476e-a97a-76b8a449777f.jpg" width="150" height="150"  class="avatar">
                      </div>
                      <div class="user-actions">
@@ -25,23 +27,27 @@
                                 <div class="portal-sub">
                                     <ul class="info-list clearfix">
                                         <li>
-                                            <h3>待支付的订单：<span class="num">0</span></h3>
+                                            <h3>待支付的订单：<span class="num">{{unpaid}}</span></h3>
+                                            <router-link :to="{path:'/order/orderList',query:{id:user.id}}">
                                             <a href="">查看待支付订单<i class="iconfont"></i></a>
+                                            </router-link>
                                             <img  src="//s01.mifile.cn/i/user/portal-icon-1.png" alt="">
                                         </li>
                                         <li>
                                             <h3>待收货的订单：<span class="num">0</span></h3>
-                                            <a href="">查看待收货订单<i class="iconfont"></i></a>
+                                            <a >查看待收货订单<i class="iconfont"></i></a>
                                             <img data-v-1ace6eb7="" src="//s01.mifile.cn/i/user/portal-icon-2.png" alt="">
                                         </li>
                                         <li>
                                             <h3>待评价商品数：<span class="num">0</span></h3>
-                                            <a href="">查看待评价商品数<i class="iconfont"></i></a>
+                                            <a >查看待评价商品数<i class="iconfont"></i></a>
                                             <img data-v-1ace6eb7="" src="//s01.mifile.cn/i/user/portal-icon-3.png" alt="">
                                         </li>
                                         <li>
-                                            <h3>喜欢的商品：<span class="num">0</span></h3>
+                                            <h3>喜欢的商品：<span class="num">{{favourite}}</span></h3>
+                                            <router-link :to="{name:'Favourite',query:{id:user.id}}">
                                             <a href="">查看喜欢的商品<i class="iconfont"></i></a>
+                                            </router-link>
                                             <img data-v-1ace6eb7="" src="//s01.mifile.cn/i/user/portal-icon-4.png" alt="">
                                         </li>
                                     </ul>
@@ -68,14 +74,19 @@
 </template>
 
 <script>
-    import {bindEmail} from "../api/user";
+    import {bindEmail} from "@/api/user";
     import {mapGetters} from "vuex";
+    import {Message} from "element-ui";
+    import {getCollectCount} from "@/api/collect";
+    import {getOrderCountBy} from "@/api/order";
 
     export default {
         name: "userInfo",
         data() {
             return {
-
+                uid:this.$route.query.id,
+                unpaid:0,
+                favourite:0,
                 BindEmail: '',
                 dialogVisible: false,
                 isShowErr: false,
@@ -83,33 +94,42 @@
                 tips:'tips:即将发送一封验证邮件到您的邮箱,此邮箱将作为您的绑定邮箱'
             };
         },
-        mounted() {
+        async mounted() {
+            await getCollectCount().then(resp=>{
+                this.favourite=resp.data
+            })
+            await getOrderCountBy({
+                uid:this.uid,
+                status:1
+            }).then(resp=>{
+                this.unpaid=resp.data
+            })
         },
         components: {},
         methods: {
             async unbindEmail() {
-                const resp = await bindEmail({
+                await bindEmail({
                     "user_id": this.$store.getters.user.id,
                     "email": this.$store.getters.user.email,
                     "operation_type": 2
+                }).then(()=>{
+                    Message({
+                        message: '邮件已发送，十五分钟之内有效，请查看邮箱信息，进行下一步操作',
+                        type: 'info',
+                        duration: 5 * 1000
+                    })
                 })
-                console.log(resp)
-                if(resp.status==200){
-                    this.tips='邮件已发送，十五分钟之内有效，请查看邮箱信息，进行下一步操作!'
-                }
             },
             async bindEmail() {
                 if (this.validateEmail()) {
-                    const resp = await bindEmail({
+                    await bindEmail({
                         "user_id": this.$store.getters.user.id,
                         "email": this.BindEmail,
                         "operation_type": 1,
 
-                    })
-                    console.log(resp)
-                    if(resp.status==200){
+                    }).then(()=>{
                         this.tips='邮件已发送，十五分钟之内有效，请查看邮箱信息，进行下一步操作'
-                    }
+                    })
                 }
             },
             handleClose(done) {

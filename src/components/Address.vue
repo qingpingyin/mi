@@ -109,9 +109,9 @@
 </template>
 
 <script>
-    import Modal from "../components/Modal";
-    import optionData from "../assets/city";
-    import {createAddress, deleteAddress, getAddress} from "../api/address";
+    import Modal from "@/components/Modal";
+    import optionData from "@/utils/city";
+    import {createAddress, deleteAddress, getAddress} from "@/api/address";
     export default {
         name: "Address",
         data(){
@@ -135,17 +135,15 @@
         },
         methods:{
             async addNewAddress(){
-                const resp = await createAddress(this.newAddress)
-                if(resp.status==200){
+                await createAddress(this.newAddress).then(()=>{
                     this.modalShow = false
                     this.initAddress()
-                }
+                })
             },
             async delAddress(id){
-                const resp = await deleteAddress(id)
-                if (resp.status==200){
+                await deleteAddress(id).then(()=>{
                     this.initAddress();
-                }
+                })
             },
             editAddress(item){
                 this.newAddress=item
@@ -175,13 +173,12 @@
                 this.newAddress.receiver_district = item.sub[0].name;//默认选择第一个市
             },
             async initAddress(){
-                const  resp = await getAddress({
+                await getAddress({
                     "uid": this.uid
-                })
-                if(resp.status==200){
+                }).then(resp=>{
                     this.addressList = resp.data
                     this.modalShow=false
-                }
+                })
             }
 
         },

@@ -1,7 +1,9 @@
 <template>
   <!-- logo -->
   <div class="header-logo">
-    <a href="/#/" class="icon-logo"></a>
+    <router-link to="/">
+      <a href="" class="icon-logo"></a>
+    </router-link>
   </div>
 </template>
 <style lang="scss">

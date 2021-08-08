@@ -21,3 +21,9 @@ export function delCollect(uid,pid) {
         "method":"delete"
     })
 }
+export function getCollectCount() {
+    return request({
+        "url":"/getCollectCount",
+        "method":"get"
+    })
+}

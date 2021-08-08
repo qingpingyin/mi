@@ -8,9 +8,11 @@
                 <ul class="goods-list clearfix">
                     <li class="goods-list-item" v-for="(item,index) in collectList" :key="index">
                         <div class="figure-img">
-                            <a  :href="'/#/detail/'+item.id" >
+                            <router-link :to="{name:'detail',query:{id:item.id}}">
+                            <a>
                                 <img :src="item.product_img[0].img_url">
                             </a>
+                            </router-link>
                         </div>
                         <h3 class="goods-title"><a>{{item.title}}</a></h3>
                         <p class="price">
@@ -20,7 +22,9 @@
                             <a class="btn-del" @click="delCollect(item.id)">
                                 删除
                             </a>
-                            <a  :href="'/#/detail/'+item.id" class="btn-detail ">查看详情</a>
+                            <router-link :to="{name:'detail',query:{id:item.id}}">
+                            <a class="btn-detail ">查看详情</a>
+                            </router-link>
                         </div>
                     </li>
                 </ul>
@@ -30,7 +34,7 @@
 </template>
 
 <script>
-    import {collectList, delCollect} from "../api/collect";
+    import {collectList, delCollect} from "@/api/collect";
 
     export default {
         name: "Favourite",
@@ -42,18 +46,16 @@
         },
         methods: {
             async delCollect(pid) {
-                const resp = await delCollect(this.uid, pid);
-                if (resp.status == 200) {
+                await delCollect(this.uid, pid).then(resp=>{
                     this.initCollect()
-                }
+                })
             },
            async initCollect(){
-                const resp = await collectList({
+                await collectList({
                     "uid": this.uid
-                })
-                if (resp.status == 200) {
+                }).then(resp=>{
                     this.collectList = resp.data
-                }
+                })
             }
         },
        async created() {

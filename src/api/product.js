@@ -16,3 +16,10 @@ export function getProductDetail(params) {
         params
     })
 }
+export function getProductBySearch(params) {
+    return request({
+        "url":"/search",
+        "method":"get",
+        params
+    })
+}

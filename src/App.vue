@@ -5,14 +5,12 @@
 </template>
 
 <script>
-
-
 export default {
   name: "App",
   components: {},
   computed: {
   },
-  async mounted() {
+  async created() {
 
   }
 };

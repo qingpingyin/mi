@@ -3,11 +3,10 @@ import request from "../utils/request";
 
 
 
-export function getCartList(params){
+export function getCartList(){
     return Request({
         url:"/cartList",
         method:'get',
-        params
     })
 }
 

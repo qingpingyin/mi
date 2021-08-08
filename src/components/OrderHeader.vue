@@ -12,7 +12,10 @@
           <i class="iconfont icon-arrow"></i>
         </a>
         <span class="split">|</span>
-        <a href="/#/order/orderList">我的订单</a>
+
+        <router-link :to="{name:'orderList',query:{id:user.id}}">
+          <a>我的订单</a>
+        </router-link>
       </div>
     </div>
   </header>

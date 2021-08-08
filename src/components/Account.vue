@@ -26,13 +26,13 @@
 </template>
 
 <script>
-    import {avatarUpload} from "../api/upload";
-    import {updateUser} from "../api/user";
+    import {avatarUpload} from "@/api/upload";
+    import {updateUser} from "@/api/user";
     export default {
         name: "Account",
         data() {
             return{
-                uid:this.$route.query.id,
+                uid: this.$route.query.id,
                 nike_name:'',
                 real_name:'',
                 avatar:''
@@ -40,17 +40,16 @@
         },
         methods: {
             async save(){
-                const resp = await updateUser({
+                await updateUser({
                     "uid":this.uid,
                     "nike_name":this.nike_name,
                     "real_name":this.real_name
-                })
-                if(resp.status==200){
+                }).then(()=>{
                     this.$store.dispatch("user/getUserInfo")
-                }
+                })
             },
             onChangeFile(file){
-                this.imageUrl = URL.createObjectURL(file.raw);
+                this.avatar = URL.createObjectURL(file.raw);
             },
             BeforeUpload(file) {
                 const isPNG = file.type === 'image/png' || file.type === 'image/jpeg'
@@ -66,12 +65,9 @@
             async UploadRequest(option) {
                 let fd =new FormData();
                 fd.append('file',option.file)
-
-                const resp =await avatarUpload(fd)
-                if (resp.status ==200){
-                    //重新刷新vuex user 数据
+                await avatarUpload(fd).then(()=>{
                     this.$store.dispatch("user/getUserInfo")
-                }
+                })
             },
         },
         computed:{
@@ -79,7 +75,6 @@
         components: {
         },
         async beforeMount() {
-            await this.$store.dispatch("user/getUserInfo")
             this.nike_name = this.$store.getters.user.nike_name
             this.real_name = this.$store.getters.user.real_name
             this.avatar = this.$store.getters.user.avatar

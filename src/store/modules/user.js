@@ -1,5 +1,5 @@
-import {login,getUserInfo} from "../../api/user";
-import {getToken, removeToken, setToken} from "../../utils/token";
+import {login,getUserInfo} from "@/api/user";
+import {getToken, removeToken, setToken} from "@/utils/token";
 import { Base64 } from 'js-base64'
 const getDefaultState = () => {
     return {
@@ -41,7 +41,6 @@ const mutations = {
         state.mobile=user.mobile
         state.nike_name=user.nike_name
         state.avatar = user.avatar
-
     }
 }
 
@@ -58,11 +57,10 @@ const actions = {
             return Promise.reject(err)
         }
     },
-     async getUserInfo({ commit }) {
+     async getUserInfo({ commit}) {
         try {
             const data  = await getUserInfo()
             commit('SET_USER_INFO', data.data)
-            localStorage.setItem("user",JSON.stringify(data.data))
             return Promise.resolve()
         } catch (err) {
             return Promise.reject(err)

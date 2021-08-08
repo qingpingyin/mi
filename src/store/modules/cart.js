@@ -1,4 +1,4 @@
-import {getCartList} from "../../api/cart";
+import {getCartList} from "@/api/cart";
 
 const state = {
         id:'',
@@ -6,12 +6,15 @@ const state = {
         uid:'',
         isCheckAll:'',
         checkGoods:[],
-        count:'',
+        count:0,
 }
 const mutations = {
     SET_COUNT:(state)=>{
         // 购物车商品总数量
         let totalNum = 0;
+        if(state.cart_item==null){
+            return
+        }
         for (let i = 0; i < state.cart_item.length; i++) {
             totalNum ++;
         }
@@ -57,10 +60,11 @@ const mutations = {
 }
 
 const actions = {
-    async getCartList({ commit },params){
+    async getCartList({ commit,dispatch}){
         try{
-            const data = await getCartList(params)
+            const data = await getCartList()
             commit('SET_CART',data.data)
+            dispatch('setCount')
             return Promise.resolve()
         }catch (err) {
             return Promise.reject(err)

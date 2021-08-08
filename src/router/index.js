@@ -1,89 +1,67 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-//首页 、产品页 、详情页
-import Home from '../pages/home'
-import Index from '../pages/index'
-import Product from '../pages/product'
-import Detail from '../pages/detail'
-import addCartSuccess from '../pages/addCartSuccess'
-
-//订单列表 、订单确认、订单支付
-import Order from '../pages/order'
-import OrderList from '../pages/orderList'
-import OrderComfirm from '../pages/orderComfirm'
-import OrderSuccess from '../pages/orderSuccess'
-import OrderPay from '../pages/orderPay'
-// 购物车
-import Cart from '../pages/cart'
-// 登录&注册
-import Register from '../pages/register'
-import RegisterIdentify from '../pages/registerIdentify'
-import Login from '../pages/login'
-import RegisterPwd from '../pages/registerPwd'
-import restPassword from "../pages/restPassword";
-import restPasswordSms from "../pages/restPasswordSms";
-import setRestPassword from "../pages/setRestPassword";
-import self from "../pages/self";
-import validateEmail from "../pages/validateEmail";
-import UserInfo from "../components/UserInfo";
-import Account from "../components/Account";
-import Favourite from "../components/Favourite";
-import Address from "../components/Address";
 
 Vue.use(VueRouter);
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+}
 
 const router = new VueRouter({
     routes: [
         {
             path: '/',
             name: 'home',
-            component: Home,
+            component: () => import('@/pages/home'),
             redirect: 'index',
             children: [
                 {
                     path: 'index',
                     name: 'index',
-                    component: Index
+                    component:()=> import('@/pages/index')
                 },
                 {
-                    path: 'product/:id',
-                    name: 'prodcut',
-                    component: Product
-                },
-                {
-                    path: 'detail/:id',
+                    path: 'detail',
                     name: 'detail',
-                    component: Detail
+                    component: () => import('@/pages/detail')
                 },
                 {
-                    path: 'addCartSuccess/:id',
+                    path: 'addCartSuccess',
                     name: 'addCartSuccess',
-                    component: addCartSuccess
+                    component: () => import('@/pages/addCartSuccess'),
+
+                },
+                {
+                    path:'cate',
+                    name: 'cate',
+                    component: () => import('@/pages/cate')
                 },
                 {
                     path: 'self',
                     name: 'self',
-                    component: self,
+                    component: () => import('@/pages/self'),
                     children:[
                         {
                             path:'userInfo',
-                            name:'UserInfo',
-                            component:UserInfo
+                            name:'userInfo',
+                            component: () => import('@/components/UserInfo')
+,
                         },
                         {
                             path: 'account',
                             name: 'Account',
-                            component: Account
+                            component: () => import('@/components/Account')
                         },
                         {
                             path: 'favourite',
                             name: 'Favourite',
-                            component:Favourite
+                            component:() => import('@/components/Favourite')
                         },
                         {
                             path: 'address',
                             name: 'Address',
-                            component: Address
+                            component: () => import('@/components/Address')
                         }
                     ]
                 },
@@ -94,23 +72,23 @@ const router = new VueRouter({
         {
             path: '/order',
             name: 'order',
-            component: Order,
+            component: ()=> import('@/pages/order'),
             redirect: 'orderComfirm',
             children: [
                 {
                     path: 'orderComfirm',
                     name: 'orderComfirm',
-                    component: OrderComfirm
+                    component: ()=> import('@/pages/orderComfirm'),
                 },
                 {
                     path: 'orderSuccess',
                     name: 'orderSuccess',
-                    component: OrderSuccess,
+                    component: () => import('@/pages/orderSuccess'),
                 },
                 {
                     path: 'orderList',
                     name: 'orderList',
-                    component: OrderList
+                    component: ()=> import('@/pages/orderList'),
                 },
 
             ]
@@ -119,37 +97,37 @@ const router = new VueRouter({
         {
             path: '/cart',
             name: 'cart',
-            component: Cart
+            component: () => import('@/pages/cart'),
         },
         {
-            path: '/validate/email/:token',
+            path: '/validate/email',
             name: 'validateEmail',
-            component: validateEmail
+            component: () => import('@/pages/validateEmail'),
         },
         // 登录
         {
             path: '/login',
             name: 'login',
-            component: Login
+            component: () => import('@/pages/login')
         },
 
         // 注册
         {
             path: '/register',
             name: 'register',
-            component: Register,
+            component: () => import('@/pages/register'),
             children: [
                 //短信验证
                 {
-                    path:'/register/:phone',
+                    path:'identify',
                     name:'identify',
-                    component: RegisterIdentify
+                    component: ()=> import('@/pages/registerIdentify')
                 },
                 //设置密码
                 {
-                    path:'/register/:phone/SetPwd',
+                    path:'setPwd',
                     name:'registerPwd',
-                    component:RegisterPwd
+                    component: () => import('@/pages/registerPwd')
                 }
             ]
         },
@@ -157,22 +135,22 @@ const router = new VueRouter({
         {
           path: '/restPassword',
           name: 'restPassword',
-          component: restPassword,
+          component: () => import('@/pages/restPassword'),
         },
         {
-            path: '/restPasswordSms/:phone',
+            path: '/restPasswordSms',
             name: 'restPasswordSms',
-            component: restPasswordSms,
+            component: () => import('@/pages/restPasswordSms'),
         },
         {
-            path: '/restPassword/:phone/:code',
+            path: '/setPassword',
             name: 'setRestPassword',
-            component: setRestPassword
+            component: () => import('@/pages/restPassword')
         },
         {
             path: '/orderPay',
             name: 'orderPay',
-            component: OrderPay
+            component: () => import('@/pages/orderPay')
         }
     ],
     scrollBehavior() {

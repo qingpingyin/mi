@@ -3,7 +3,8 @@
         <div class="list-right ">
             <ul class="clearfix" >
                 <li v-for="(item,index) in list" :key="index">
-                    <a :href="'/#/detail/'+item.id" target="_blank">
+                    <router-link :to="{name:'detail',query:{id:item.id}}">
+                    <a>
                         <div class="figure ">
                             <img :src="item.img_url" alt/>
                         </div>
@@ -16,6 +17,7 @@
                             <del v-if="item.market_price==null">{{item.market_price}}元</del>
                         </p>
                     </a>
+                    </router-link>
                 </li>
                 <li v-show="isMore">
                     <a>
@@ -76,7 +78,7 @@
                             img{
                                 width: auto;
                                 height: 140px;
-                                padding: 0 0 10px;
+                                /*padding: 0 0 10px;*/
                             }
                         }
                         h3{
