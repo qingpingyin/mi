@@ -1,4 +1,4 @@
-import request from "../utils/request"
+import request from "@/utils/request"
 /*
 *
 * use api
@@ -19,3 +19,65 @@ export function getUserInfo() {
     })
 }
 
+export function logout(data) {
+    return request({
+        url:"/logout",
+        method:"post",
+        data
+    })
+}
+
+export function sendSms(data){
+    return request({
+        url:"/sendSms",
+        method:"post",
+        data
+    })
+}
+
+export function checkCode(data) {
+    return request({
+        url:"/checkCode",
+        method:"post",
+        data
+    })
+}
+export function register(data) {
+    return request({
+        url:"/singUpByMobile",
+        method:"post",
+        data
+    })
+}
+
+export function forgetPassword(data) {
+    return request({
+        url:'/forgetPassword',
+        method:'put',
+        data
+    })
+}
+
+export function bindEmail(data) {
+    return request({
+        url:'/bindEmail',
+        method:"post",
+        data
+    })
+}
+
+
+export function validateEmail(params) {
+    return request({
+        "url":"/validate/email",
+        "method":"get",
+        params
+    })
+}
+export function updateUser(data) {
+    return request({
+        "url":"/updateUser",
+        "method":"put",
+        data
+    })
+}

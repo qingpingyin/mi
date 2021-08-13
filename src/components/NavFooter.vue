@@ -2,7 +2,7 @@
   <footer class="nav-footer">
     <div class="container">
       <!-- 服务条组件 -->
-      <service-bar></service-bar>
+      <ServiceBar/>
       <!-- 小米服务 -->
       <div class="footer-wrapper clearfix">
         <div class="service-links">
@@ -331,7 +331,7 @@ export default {
   }
 };
 </script>
-<style lang="scss" >
+<style lang="scss"  >
 .nav-footer {
   background-color: #fff;
   .container {

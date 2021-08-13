@@ -16,18 +16,20 @@
   </div>
 </template>
 <script>
-import {getProductDetail} from '../api'
+import {getProductDetail} from '@/api/product'
 export default {
   name:'buy-scuuess',
   data(){
     return{
-      id:this.$route.params.id,
+      id:this.$route.query.id,
       productName:''
     }
   },
-  mounted(){
-    getProductDetail(this.id).then(res =>{
-      this.productName = res.name;
+  async mounted(){
+    await getProductDetail({
+      "pid":this.id
+    }).then(resp=>{
+      this.productName =resp.data.title
     })
   }
 }

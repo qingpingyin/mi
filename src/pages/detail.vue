@@ -15,12 +15,11 @@
       </div>
       <!-- 商品选项 -->
       <div class="product-detail-box">
-        <h3 class="product-name">{{product.name}}</h3>
-        <p class="product-subtitle">{{product.subtitle}}</p>
+        <h3 class="product-name">{{product.title}}</h3>
+        <p class="product-subtitle">{{product.description}}</p>
         <p class="owner">小米自营</p>
         <p class="product-price">
-          <span class="price-discount">{{product.price}}元</span>
-          <span class="price" v-if="product.discount">2599元</span>
+          <span class="price-discount">{{product.shop_price}}元</span>
         </p>
         <!-- 地址 -->
         <div class="address-box"></div>
@@ -56,15 +55,15 @@
         </div>
         <div class="selected-box">
           <p class="product-info">
-            <span class="name">{{product.name}}</span>
-            <span class="price">{{product.price}}元</span>
+            <span class="name">{{product.title}}</span>
+            <span class="price">{{product.shop_price}}元</span>
           </p>
-          <p class="total-price">总计：{{product.price}}元</p>
+          <p class="total-price">总计：{{product.shop_price}}元</p>
         </div>
         <div class="addCart-box">
-          <span class="btn-add" @click="addToCart" v-if="user.real_name !== ''">加入购物车</span>
+          <span class="btn-add" @click="addToCart" v-if="user.id !== ''">加入购物车</span>
           <span class="btn-add" @click="$router.push({name:'login'})" v-else>登陆后购买</span>
-          <span class="btn-like">收藏</span>
+          <span class="btn-like" @click="collect(product.id)">收藏</span>
         </div>
       </div>
     </div>
@@ -82,14 +81,17 @@
 <script>
 import "swiper/dist/css/swiper.css";
 import { swiper, swiperSlide } from "vue-awesome-swiper";
-import ProductParams from "../components/ProductParams";
+import ProductParams from "@/components/ProductParams";
 import {mapGetters} from "vuex";
-import {getProductDetail} from "../api/product";
+import {getProductDetail} from "@/api/product";
+import {addCart} from "@/api/cart";
+import {createCollect} from "@/api/collect";
+
 export default {
   name: "detail",
   data() {
     return {
-      id: this.$route.params.id,
+      id: this.$route.query.id,
       isSelected: 0, //选择的规格
       selectedColor: 0, //选择的颜色
       // swiper配置参数
@@ -119,12 +121,7 @@ export default {
         // 所有的参数同 swiper 官方 api 参数
         // ...
       },
-      subImages: [
-        "/imgs/subImages/sub-img-2.jpg",
-        "/imgs/subImages/sub-img-3.jpg",
-        "/imgs/subImages/sub-img-1.jpg"
-      ],
-      //   规格
+      //规格
       options: [
         {
           name: "12GB+512GB ",
@@ -153,40 +150,61 @@ export default {
       product: []
     };
   },
-  computed:{
+  computed: {
     ...mapGetters([
       'user'
-    ])
+    ]),
   },
-   methods: {
-   async getProduct() {
-      const product = await getProductDetail({
-        "pid":this.id
-      })
-      this.product = product.data
-     console.log(this.product)
-    },
-    addToCart() {
-      this.$axios
-        .post("/carts", {
-          productId: this.id,
-          selected: true
+  methods: {
+      async collect(pid) {
+        await createCollect({
+          "uid": this.$store.getters.user.id,
+          "pid": pid
         })
-        .then(res => {
+      },
+      async initProduct() {
+        await getProductDetail({
+          "pid": this.id
+        }).then(resp => {
+          this.product = resp.data
+        })
+      },
+      async addToCart() {
+        let data = {
+          uid: this.$store.getters.user.id + "",
+          pid: this.id + "",
+          num: "1"
+        }
+        //添加购物车 默认数量为1
+        await addCart(data).then(() => {
+          this.$store.dispatch("cart/getCartList")
           // 添加购物车成功
-          this.$store.dispatch('saveCartCount',res.cartTotalQuantity)
-          this.$router.push(`/addCartSuccess/${this.id}`);
-        });
+          this.$router.push({
+            name: 'addCartSuccess',
+            query: {
+              id: this.id
+            }
+          });
+        })
+      }
+    },
+    components: {
+      ProductParams,
+      swiper,
+      swiperSlide
+    },
+  watch:{
+    $route: {
+      handler() {
+        this.id = this.$route.query.id;
+        this.initProduct();
+        //深度监听，同时也可监听到param参数变化
+      },
+      deep: true,
     }
   },
-
-  mounted() {
-    this.getProduct();
-  },
-  components: {
-    ProductParams,
-    swiper,
-    swiperSlide
+  mounted (){
+    this.initProduct()
   }
 };
 </script>
@@ -389,18 +407,20 @@ export default {
     }
   }
   .tips-box {
-    background-color: #f5f5f5;
+    background-color: #F5F5F5;
     padding-bottom: 50px;
     .wrapper {
       width: 1226px;
       margin: 0 auto;
       h3 {
         font-size: 22px;
-        color: #333;
-        padding: 22px 0;
-        font-weight: normal;
+        font-weight: 400;
+        margin-top: 30px;
+        margin-bottom: 0;
+        padding: 1em 0;
       }
       p {
+        margin: 30px 0px 0px 20px;
         padding: 40px 88px;
         background-color: #fff;
         font-size: 16px;

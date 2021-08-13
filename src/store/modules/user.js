@@ -1,5 +1,5 @@
-import {login,getUserInfo} from "../../api/user";
-import {getToken, setToken} from "../../utils/token";
+import {login,getUserInfo} from "@/api/user";
+import {getToken, removeToken, setToken} from "@/utils/token";
 import { Base64 } from 'js-base64'
 const getDefaultState = () => {
     return {
@@ -10,6 +10,7 @@ const getDefaultState = () => {
         sub: '',
         email:'',
         nike_name:'',//昵称
+        avatar:'',
         exp: 0 // 过期时间
     }
 }
@@ -39,7 +40,7 @@ const mutations = {
         state.email=user.email
         state.mobile=user.mobile
         state.nike_name=user.nike_name
-
+        state.avatar = user.avatar
     }
 }
 
@@ -49,23 +50,34 @@ const actions = {
         try {
             const data =await login(userInfo)
             commit('SET_TOKEN', data.data.access_token)
-            setToken("access_token",data.data.access_token)
+            setToken(data.data.access_token)
             await dispatch('getUserInfo')
             return  Promise.resolve()
         }catch (err) {
             return Promise.reject(err)
         }
     },
-    async getUserInfo({ commit }) {
+     async getUserInfo({ commit}) {
         try {
             const data  = await getUserInfo()
-            console.log(data.data)
             commit('SET_USER_INFO', data.data)
             return Promise.resolve()
         } catch (err) {
             return Promise.reject(err)
         }
     },
+    async logout({commit}) {
+        removeToken()
+        commit('RESET_STATE')
+        return Promise.resolve()
+    },
+    // remove token
+    async resetToken({ commit }) {
+        removeToken() // must remove  token  first
+        commit('RESET_STATE')
+        return Promise.resolve()
+    }
+
 }
 
 export default {

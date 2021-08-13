@@ -1,39 +1,105 @@
 import axios from "axios";
+import store from "@/store";
 import {getToken} from "./token";
 import {Message,MessageBox} from "element-ui";
+import {baseApi} from '@/config'
 
 
 const service =axios.create({
-    baseURL:"/",
+    baseURL: baseApi,
     timeout:1000*5
 })
 
+const reqList =[];
+const cancelArr =[];
+
+const stopRepeatRequest =(url,{data,params,intercept,method})=> {
+    if(reqList.length>1){
+        if(intercept !==2){
+            if(intercept===1){
+                for (let i = reqList.length-2; i >= 0 ; i--) {
+                    if(reqList[i].url===`${url}`){
+                        cancelArr[i]();
+                        cancelArr.splice(i,1);
+                        reqList.splice(i,1);
+                    }
+                }
+            }else {
+                const last = reqList.length-1;
+                for (let i = reqList.length-2; i >= 0 ; i--) {
+                    if (reqList[i].url === `${url}` && reqList[i].data === JSON.stringify(data) && method === 'post') {
+                        console.log('post', reqList[i].url);
+                        cancelArr[last]();
+                        cancelArr.pop();
+                        reqList.pop();
+                        break;
+                    } else if (reqList[i].url === `${url}` && reqList[i].params === JSON.stringify(params) && method === 'get') {
+                        console.log('get', reqList[i].url);
+                        cancelArr[last]();
+                        cancelArr.pop();
+                        reqList.pop();
+                    }
+
+                }
+            }
+        }
+    }
+}
+const clearRequest = function ({ url, data }) {
+    for (let i = reqList.length - 1; i >= 0; i--) {
+        if (reqList[i].url === url && reqList[i].data === data) {
+            reqList.splice(i, 1);
+            cancelArr.splice(i, 1);
+            break; // 每个request只清除自己，所以 break
+        }
+    }
+};
+
 //请求拦截
 service.interceptors.request.use(config=>{
+
     const token = getToken("access_token");
     if(token){
         config.headers["Authorization"]=token;
     }
+    config['cancelToken'] = new axios.CancelToken(c => {
+        cancelArr.push(c);
+    });
+    let url = config.url.startsWith('/') ? '' : '/';
+    url += config.url;
+    reqList.push({
+        url: `${url}`,
+        data: JSON.stringify(config.data),
+        params: config.params,
+        method: config.method
+    });
+    stopRepeatRequest(url, config);
     return config
+},error => {
+    return Promise.reject(error)
 })
 //响应拦截
 service.interceptors.response.use(
     response => {
-        const { data } = response
+        // 增加延迟，相同请求不得在短时间内重复发送
+        setTimeout(() => {
+            clearRequest(response.config);
+        }, 1000);
+        const  res  = response.data
         // 正常情况
-        if (data.status !== 200) {
+        if (res.status !== 200) {
             Message({
-                message: data.msg,
+                message: res.msg,
                 type: 'error',
                 duration: 5 * 1000
             })
-            return Promise.reject(data.msg)
+            return Promise.reject(res.msg)
         }
-        return data
+        return res
     },
     async error => {
-        const { status, data } = error.response
-        switch (status) {
+        const  resp  = error.response
+        switch (resp.status) {
             case 500:
                 Message({
                     message: '系统错误',
@@ -49,13 +115,20 @@ service.interceptors.response.use(
                 })
                 break
             case 401:
-                // await MessageBox.confirm(data.msg, '登录过期，请重新登录', {
-                //     confirmButtonText: '重新登录',
-                //     cancelButtonText: '取消',
-                //     type: 'warning'
-                // })
-                // await store.dispatch('user/resetToken')
-                // location.reload()
+                 await MessageBox.confirm("请登陆后再操作", '权限不足', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                })
+                await store.dispatch('user/resetToken')
+                location.reload()
+                break
+            case 400:
+                Message({
+                    message: resp.data.msg,
+                    type: 'error',
+                    duration: 5 * 1000
+                })
                 break
             default:
                 Message({
@@ -64,6 +137,9 @@ service.interceptors.response.use(
                     duration: 5 * 1000
                 })
                 break
+        }
+        if (axios.isCancel(error)) {
+            console.log('打断请求成功', error);
         }
         return Promise.reject(error)
     }

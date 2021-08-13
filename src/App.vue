@@ -8,18 +8,10 @@
 export default {
   name: "App",
   components: {},
-  computed: {},
-  async mounted() {
+  computed: {
+  },
+  async created() {
 
-      await this.$store.dispatch('user/getUserInfo')
-    // getCartCount().then(res => {
-    //   //未登录时，接口返回不是数字类型时，设置为0
-    //   if (typeof res !== "number") {
-    //     this.$store.dispatch("saveCartCount", 0);
-    //   } else {
-    //     this.$store.dispatch("saveCartCount", res);
-    //   }
-    // });
   }
 };
 </script>

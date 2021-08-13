@@ -53,30 +53,34 @@
               <span class="username">{{user.nike_name}}</span>
               <ul class="userzone">
                 <li>
-                  <a href>个人中心</a>
+                  <a href="/#/self/userInfo">个人中心</a>
                 </li>
                 <li>
-                  <a href>评价晒单</a>
+                  <a>评价晒单</a>
                 </li>
                 <li>
-                  <a href>我的喜欢</a>
+                   <router-link :to="{path:'/self/favourite',query:{id:user.id}}">
+                      <a href="">我的喜欢</a>
+                    </router-link>
                 </li>
                 <li>
                   <a href="javascript:;" @click="logout">退出登录</a>
                 </li>
               </ul>
             </a>
-            <a href="/#/order/orderList" class="my-order" target="__blank">我的订单</a>
+            <router-link :to="{path:'/order/orderList',query:{id:user.id}}">
+            <a href="javascript:void(0)" class="my-order" target="_blank">我的订单</a>
+            </router-link>
           </span>
           <!-- 未登录显示 -->
           <span class="not-login" v-else>
             <a href="/#/login">登录</a>
             <a  @click="$emit('register-click')">注册</a>
           </span>
-          <a href="/#/login" class="msg">消息通知</a>
-          <a href="/#/cart" class="my-cart" :class="{'has-goods':cartCount > 0}">
+          <a class="msg">消息通知</a>
+          <a href="/#/cart" class="my-cart" :class="{'has-goods':cart.count>0}">
             <span class="iconfont icon-Cart"></span>
-            购物车({{cartCount}})
+            购物车({{cart.count}})
           </a>
         </div>
       </div>
@@ -92,19 +96,21 @@
                 <span class="item-name" >{{categoryItem.categories_name}}</span>
             <ul class="children" v-if="categoryItem.parent_id > 0">
               <li   v-for="(item,i) in categoryItem.product" :key="i" class="product-item">
-                <a href="javascript:;">
+                <router-link :to="{name:'detail',query:{id:item.id}}">
+                <a>
                   <img :src="item.img_url" class="product-img" />
                   <p class="product-name">{{item.title}}</p>
                   <p class="product-price">{{item.shop_price}}元起</p>
                 </a>
+                </router-link>
               </li>
             </ul>
           </li>
         </ul>
         <!-- 搜索框 -->
         <div class="header-search">
-          <input type="text" class="search-input" :placeholder="placeholderValue" />
-          <a href="javascript:;" class="search-btn"></a>
+          <input type="text" class="search-input" v-model="where" :placeholder="placeholderValue"/>
+            <a :href="'/#/cate?search='+this.where" @click="search" class="search-btn"></a>
         </div>
       </div>
     </div>
@@ -114,22 +120,23 @@
 
 import Logo from './Logo'
 import {mapGetters} from 'vuex'
-import {getCate} from "../api/cate";
+import {getCate} from "@/api/cate";
+import {logout} from "@/api/user";
+
 export default {
   name: "nav-header",
   data() {
     return {
+      where:'',
       NavCategoryList: [],
       placeholderValue: "小米手机10"
     };
   },
   computed: {
     ...mapGetters([
-            'user'
+            'user',
+            'cart'
     ])
-    // cartCount() {
-    //   return this.$store.state.cartCount;
-    // }
   },
   components:{
     Logo
@@ -146,19 +153,26 @@ export default {
       headerSearch.classList.remove("input-focus");
       searchBtn.style.borderLeftColor = "#e0e0e0";
     });
-
-    const data = await getCate({
+    await getCate({
       "is_nav":1
+    }).then(resp=>{
+      this.NavCategoryList =resp.data
     })
-    this.NavCategoryList =data.data
   },
   methods: {
-    logout() {
-      this.$axios.post("/user/logout").then(() => {
-        this.$store.dispatch("saveUserName", "");
-        this.$store.dispatch('saveCartCount',0)
-        this.toast.show("退出成功");
-      });
+    async logout() {
+      await logout().then(()=>{
+        this.$store.dispatch('user/logout')
+        this.$store.dispatch('cart/initCart')
+        this.$router.push({ path: this.redirect || '/index' })
+      })
+    },
+    async search(){
+      this.$store.dispatch("product/setList",{
+        "page":1,
+        "pageSize":20,
+        "search":this.where
+      })
     }
   }
 };
@@ -393,9 +407,9 @@ export default {
                 font-size: 12px;
                 text-decoration: none;
                 .product-img {
-                  margin-top: 26px;
+                  margin-top: 18px;
                   width: auto;
-                  height: 111px;
+                  height: 110px;
                 }
                 .product-name {
                   color: $colorB;

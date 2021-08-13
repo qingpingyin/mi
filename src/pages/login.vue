@@ -34,9 +34,9 @@
             <p class="other-way">
               <a href>手机短信登录/注册</a>
               <span>
-                <a href>立即注册</a>
+                <a href="/#/register">立即注册</a>
                 <span class="split">|</span>
-                <a href>忘记密码</a>
+                <a href="#/restPassword">忘记密码</a>
               </span>
             </p>
           </div>
@@ -78,11 +78,13 @@
   methods: {
    async login() {
         //表单验证
-
-        await this.$store.dispatch('user/login',this.loginForm)
-
-        this.$router.push({ path: this.redirect || '/' })
-    }
+     try {
+       await this.$store.dispatch('user/login',this.loginForm)
+       this.$router.push({ path: this.redirect || '/' })
+     }catch (err) {
+       console.log(err)
+     }
+   }
   }
 };
 </script>

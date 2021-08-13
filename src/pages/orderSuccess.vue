@@ -6,12 +6,12 @@
         <div class="success-img">
           <img src="/imgs/slider/success.png" alt />
         </div>
-        <div class="order-detail" v-if="order.shippingVo">
+        <div class="order-detail" v-if="order.id">
           <div class="order-info">
             <div class="fl">
               <h2>订单提交成功！去付款咯~</h2>
               <p class="tips">请在 1小时59分内完成支付，超市后将取消订单</p>
-              <p class="receiver-info" v-if="!showMore">{{address}}</p>
+              <p class="receiver-info" v-if="!showMore">{{address.receiver_name}}:{{address.receiver_province+address.receiver_city+address.receiver_district+address.receiver_address}}</p>
             </div>
             <div class="fr">
               <p class="order-money">
@@ -29,18 +29,18 @@
             <ul class="order-views">
               <li>
                 <span class="title">订单号:</span>
-                <span class="order-No">{{order.orderNo}}</span>
+                <span class="order-No">{{order.id}}</span>
               </li>
               <li>
                 <span class="title">收货信息:</span>
-                {{address}}
+                {{address.receiver_name}}:{{address.receiver_province+address.receiver_city+address.receiver_district+address.receiver_address}}
               </li>
               <li>
                 <span class="title">商品名称:</span>
                 <span
-                  v-for="(item,index) in order.orderItemVoList"
+                  v-for="(item,index) in order.order_item"
                   :key="index"
-                >{{item.productName}}</span>
+                >{{item.title}}</span>
               </li>
               <li>
                 <span class="title">发票信息:</span>电子发票 个人
@@ -60,12 +60,12 @@
               </a>
             </li>
             <li>
-              <a href>
+              <a @click="alipayClick">
                 <img src="/imgs/payment/weixinpay.png" alt />
               </a>
             </li>
             <li>
-              <a href>
+              <a @click="alipayClick">
                 <img src="/imgs/payment/unionpay.png" alt />
               </a>
             </li>
@@ -77,49 +77,51 @@
   </div>
 </template>
 <script>
-import OrderHeader from "../components/OrderHeader";
-import NavFooter from "../components/NavFooter";
+import OrderHeader from "@/components/OrderHeader";
+import NavFooter from "@/components/NavFooter";
+import {getAddressById} from "@/api/address";
+import {getOrderById} from "@/api/order";
+import {Message} from "element-ui";
 export default {
   name: "order-success",
   data() {
     return {
       showMore: false,
-    orderId: this.$route.query.orderNo,
-      order: {}
+      oid: this.$route.query.oid,
+      aid: this.$route.query.aid,
+      order: {},
+      address:{}
     };
   },
   computed: {
-    address() {
-      let {
-        receiverName,
-        receiverMobile,
-        receiverProvince,
-        receiverCity,
-        receiverDistrict,
-        receiverAddress
-      } = this.order.shippingVo;
-      return `${receiverName} ${receiverMobile} ${receiverProvince} ${receiverCity} ${receiverDistrict} ${receiverAddress}`;
-    }
+
   },
   methods: {
-    getOrderInfo() {
-      this.$axios.get(`orders/${this.orderId}`).then(res => {
-        this.order = res;
-      });
+    async getOrderInfo() {
+      await getOrderById({
+        "oid":this.oid
+      }).then(resp=>{
+        this.order=resp.data
+      })
+    },
+    async getAddressInfo(){
+      await getAddressById({
+        "aid":this.aid
+      }).then(resp=>{
+        this.address=resp.data
+      })
     },
     alipayClick(){
-      window.open('/#/orderPay?orderId='+ this.orderId,'_blank')
-        /* this.$axios.post('/pay',{
-          orderId:this.orderId,
-          orderName:'小米商城支付',
-          amount:'0.01',
-          payType:1
-        }).then(res =>{
-          console.log(res)
-        }) */
+      Message({
+        message: '支付待完善',
+        type: 'info',
+        duration: 5 * 1000
+      })
+      return
     }
   },
   mounted() {
+    this.getAddressInfo()
     this.getOrderInfo();
   },
   components: {

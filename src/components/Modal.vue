@@ -27,7 +27,7 @@
           >{{cancleTitle}}</span>
           <div class="btn-group" v-if="btnType === 0">
             <span class="btn btn-confirm" @click="$emit('confirm')">{{confirmTitle}}</span>
-            <span class="btn btn-cancle" @click="$emit('cancle')">{{cancleTitle}}</span>
+            <span class="btn btn-cancle" @click="$emit('close')">{{cancleTitle}}</span>
           </div>
         </div>
       </div>
@@ -54,13 +54,13 @@ export default {
       type:String,
       default:''
     },
-    /* 
+    /*
     *按钮类型
         0 ==== 确认，取消按钮组
         1 ==== 确认
         2 ==== 取消
-    
-    
+
+
     */
     btnType: {
       type: Number,
@@ -77,7 +77,6 @@ export default {
         return this.modalShow;
       },
       set(newValue) {
-        console.log(newValue);
         this.modalShow = newValue;
       }
     }
@@ -86,9 +85,6 @@ export default {
     return {};
   },
   methods: {
-    doSomething() {
-      console.log("fjjdfj");
-    }
   }
 };
 </script>
@@ -111,7 +107,7 @@ export default {
   }
   .dialog {
     position: fixed;
-    width: 660px;
+    width: 1000px;
     left: 50%;
     top: 0;
     transform: translate(-50%, 100px);

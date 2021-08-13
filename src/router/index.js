@@ -1,79 +1,94 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-//首页 、产品页 、详情页
-import Home from '../pages/home'
-import Index from '../pages/index'
-import Product from '../pages/product'
-import Detail from '../pages/detail'
-import addCartSuccess from '../pages/addCartSuccess'
-
-//订单列表 、订单确认、订单支付
-import Order from '../pages/order'
-import OrderList from '../pages/orderList'
-import OrderComfirm from '../pages/orderComfirm'
-import OrderSuccess from '../pages/orderSuccess'
-import OrderPay from '../pages/orderPay'
-// 购物车
-import Cart from '../pages/cart'
-// 登录&注册
-import Register from '../pages/register'
-import Login from '../pages/login'
-
 
 Vue.use(VueRouter);
 
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+}
+
 const router = new VueRouter({
     routes: [
-        //首页 、产品页 、详情页 、加购物车成功页
         {
             path: '/',
             name: 'home',
-            component: Home,
+            component: () => import('@/pages/home'),
             redirect: 'index',
             children: [
                 {
                     path: 'index',
                     name: 'index',
-                    component: Index
+                    component:()=> import('@/pages/index')
                 },
                 {
-                    path: 'product/:id',
-                    name: 'prodcut',
-                    component: Product
-                },
-                {
-                    path: 'detail/:id',
+                    path: 'detail',
                     name: 'detail',
-                    component: Detail
+                    component: () => import('@/pages/detail')
                 },
                 {
-                    path: 'addCartSuccess/:id',
+                    path: 'addCartSuccess',
                     name: 'addCartSuccess',
-                    component: addCartSuccess
+                    component: () => import('@/pages/addCartSuccess'),
+
                 },
+                {
+                    path:'cate',
+                    name: 'cate',
+                    component: () => import('@/pages/cate')
+                },
+                {
+                    path: 'self',
+                    name: 'self',
+                    component: () => import('@/pages/self'),
+                    children:[
+                        {
+                            path:'userInfo',
+                            name:'userInfo',
+                            component: () => import('@/components/UserInfo')
+,
+                        },
+                        {
+                            path: 'account',
+                            name: 'Account',
+                            component: () => import('@/components/Account')
+                        },
+                        {
+                            path: 'favourite',
+                            name: 'Favourite',
+                            component:() => import('@/components/Favourite')
+                        },
+                        {
+                            path: 'address',
+                            name: 'Address',
+                            component: () => import('@/components/Address')
+                        }
+                    ]
+                },
+
             ]
         },
         //订单列表 、订单确认、订单支付
         {
             path: '/order',
             name: 'order',
-            component: Order,
+            component: ()=> import('@/pages/order'),
             redirect: 'orderComfirm',
             children: [
                 {
                     path: 'orderComfirm',
                     name: 'orderComfirm',
-                    component: OrderComfirm
+                    component: ()=> import('@/pages/orderComfirm'),
                 },
                 {
                     path: 'orderSuccess',
                     name: 'orderSuccess',
-                    component: OrderSuccess,
+                    component: () => import('@/pages/orderSuccess'),
                 },
                 {
                     path: 'orderList',
                     name: 'orderList',
-                    component: OrderList
+                    component: ()=> import('@/pages/orderList'),
                 },
 
             ]
@@ -82,24 +97,60 @@ const router = new VueRouter({
         {
             path: '/cart',
             name: 'cart',
-            component: Cart
+            component: () => import('@/pages/cart'),
+        },
+        {
+            path: '/validate/email',
+            name: 'validateEmail',
+            component: () => import('@/pages/validateEmail'),
         },
         // 登录
         {
             path: '/login',
             name: 'login',
-            component: Login
+            component: () => import('@/pages/login')
         },
+
         // 注册
         {
             path: '/register',
             name: 'register',
-            component: Register
+            component: () => import('@/pages/register'),
+            children: [
+                //短信验证
+                {
+                    path:'identify',
+                    name:'identify',
+                    component: ()=> import('@/pages/registerIdentify')
+                },
+                //设置密码
+                {
+                    path:'setPwd',
+                    name:'registerPwd',
+                    component: () => import('@/pages/registerPwd')
+                }
+            ]
+        },
+        //忘记密码
+        {
+          path: '/restPassword',
+          name: 'restPassword',
+          component: () => import('@/pages/restPassword'),
+        },
+        {
+            path: '/restPasswordSms',
+            name: 'restPasswordSms',
+            component: () => import('@/pages/restPasswordSms'),
+        },
+        {
+            path: '/setPassword',
+            name: 'setRestPassword',
+            component: () => import('@/pages/setRestPassword')
         },
         {
             path: '/orderPay',
             name: 'orderPay',
-            component: OrderPay
+            component: () => import('@/pages/orderPay')
         }
     ],
     scrollBehavior() {
