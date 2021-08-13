@@ -20,6 +20,12 @@ const mutations = {
         }
         state.count=totalNum
     },
+    INIT_CART:(state) =>{
+        state.id=''
+        state.cart_item=[]
+        state.count=0
+        state.checkGoods=[]
+    },
     SET_CART: (state, data) => {
         Object.assign(state,data)
     },
@@ -84,6 +90,9 @@ const actions = {
     },
     async setCount({commit}){
         commit('SET_COUNT')
+    },
+    async initCart({commit}){
+        commit('INIT_CART')
     }
 }
 export default {

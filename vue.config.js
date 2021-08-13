@@ -21,17 +21,17 @@ module.exports = {
             warnings: false,
             errors: true
         },
-        proxy: {
-          //配置跨域
-          '/': {
-              target: "http://localhost:8088/api",
-              // ws:true,
-              changOrigin:true,
-              pathRewrite:{
-                  '^/':''
-              }
-          }
-        }
+        // proxy: {
+        //   //配置跨域
+        //   '/': {
+        //       target: "http://localhost:8088/api",
+        //       // ws:true,
+        //       changOrigin:true,
+        //       pathRewrite:{
+        //           '^/':''
+        //       }
+        //   }
+        // }
     },
     css: {
         extract: IS_PROD, // 是否将组件中的 CSS 提取至一个独立的 CSS 文件中 (而不是动态注入到 JavaScript 中的 inline 代码)。

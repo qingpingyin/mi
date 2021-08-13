@@ -20,7 +20,7 @@
                     </router-link>
                 </li>
                 <li v-show="isMore">
-                    <a>
+                    <a href="/#/cate">
                         浏览更多<i class="el-icon-d-arrow-right"></i>
                     </a>
                 </li>

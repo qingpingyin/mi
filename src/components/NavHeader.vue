@@ -163,6 +163,7 @@ export default {
     async logout() {
       await logout().then(()=>{
         this.$store.dispatch('user/logout')
+        this.$store.dispatch('cart/initCart')
         this.$router.push({ path: this.redirect || '/index' })
       })
     },

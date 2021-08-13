@@ -145,7 +145,7 @@ const router = new VueRouter({
         {
             path: '/setPassword',
             name: 'setRestPassword',
-            component: () => import('@/pages/restPassword')
+            component: () => import('@/pages/setRestPassword')
         },
         {
             path: '/orderPay',

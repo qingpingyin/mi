@@ -99,9 +99,10 @@
                 this.favourite=resp.data
             })
             await getOrderCountBy({
-                uid:this.uid,
-                status:1
+                "uid":this.$store.getters.user.id,
+                "status":1
             }).then(resp=>{
+                console.log(resp)
                 this.unpaid=resp.data
             })
         },
@@ -134,10 +135,10 @@
             },
             handleClose(done) {
                 this.$confirm('确认关闭？')
-                    .then(_ => {
+                    .then(() => {
                         done();
                     })
-                    .catch(_ => {
+                    .catch(()=> {
                     });
             },
             validateEmail() {

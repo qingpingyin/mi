@@ -46,7 +46,7 @@
         },
         methods: {
             async delCollect(pid) {
-                await delCollect(this.uid, pid).then(resp=>{
+                await delCollect(this.uid, pid).then(()=>{
                     this.initCollect()
                 })
             },

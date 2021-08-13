@@ -1,8 +1,8 @@
 import axios from "axios";
-import store from "../store";
+import store from "@/store";
 import {getToken} from "./token";
 import {Message,MessageBox} from "element-ui";
-import {baseApi} from '../config'
+import {baseApi} from '@/config'
 
 
 const service =axios.create({
